@@ -1,0 +1,66 @@
+// global colors
+$white: #fafafa;
+$yellow: #EFBE1E;
+$black: #011627;
+@import './navbar.scss';
+#__next{
+  overflow: hidden;
+}
+#page-wrap{
+  margin-top: 80px;
+  margin-bottom: 120px;
+}
+.head-text{
+  text-align: center;
+  font-size: 48px;
+}
+.align-center{
+  align-items: center;
+  text-align: center;
+}
+.product-image{
+  position: relative;
+}
+.product-price{
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  color: $white !important;
+}
+.product-head{
+  position: relative;
+  svg{
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 48px;
+    color: $black;
+  }
+}
+.btn-addcart{
+  font-weight: bold !important;
+  svg{
+    // margin-left: 8px;
+    font-size: 24px;
+  }
+}
+footer{
+  width: 100vw;
+  color: $white;
+  background-color: $black;
+  height: 96px;
+  position: fixed;
+  bottom: 0px;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.headline > div{
+  padding: 8pt !important;
+}
+@media only screen and (max-width: 651px) {
+  .head-text {
+    font-size: 5.2vw;
+  }
+}
