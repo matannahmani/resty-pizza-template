@@ -1,0 +1,105 @@
+.product-image{
+    position: relative;
+  }
+  .product-price{
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    color: $white !important;
+  }
+  .product-head{
+    position: relative;
+    svg{
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      font-size: 48px;
+      color: $black;
+    }
+  }
+  .btn-addcart{
+    font-weight: bold !important;
+    svg{
+      // margin-left: 8px;
+      font-size: 24px;
+    }
+  }
+  .pizza-box{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 120px;
+    color: $white;
+    .name{
+      font-size: 32px;
+      margin: 24px;
+    }
+    .price{
+      font-size: 22px;
+    }
+    .description{
+      padding: 16px 48px;
+      text-align: center;
+      color: #CACDEE;
+      font-size: 14px;
+    }
+  }
+  .pizza-size{
+    padding: 40px;
+    width: 290px;
+    height: 63px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    .option{
+      width: 86px;
+      height: 100%;
+      font-size: 22px;
+      background: $gray;
+      color: $light-gray;
+      border-radius: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .active{
+      color: $gray;
+      background: $yellow;
+    }
+  }
+  .addcart{
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    width: 100%;
+    .cartoption{
+      width: 186px;
+      height: 50px;
+      background: $yellow;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      font-size: 24px;
+      color: $white;
+      font-weight: bolder;
+      button{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 40px;
+        height: 40px;
+        background: $white;
+        color: $gray;
+        border-radius: 50%;
+      }
+      span{
+        background:rgba(255,255,255, 0.6);
+        color: $gray;
+        width: 60px;
+        text-align: center;
+        border-radius: 8px;
+      }
+    }
+  }

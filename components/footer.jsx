@@ -1,9 +1,15 @@
-import {Image,Card,Divider,Text,Button} from "@geist-ui/react";
+import {FaHamburger,FaPizzaSlice} from 'react-icons/fa'
 export default () => {
     return (
-    <footer>
-        <Image width={80} height={80} src="logo.png" />
-        <Image width={80} height={80} src="logo.png" />
-    </footer>
+        <footer>
+        <div className="footer-nav">
+        <FaHamburger/>
+        <span>Marchi Burger</span>
+        </div>
+        <div className="footer-nav">
+        <FaPizzaSlice/>
+        <span>Pepperoni Pizza</span>
+        </div>
+        </footer>
     )
 }

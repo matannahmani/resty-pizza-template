@@ -1,10 +1,16 @@
-// import { scaleDown as Menu } from 'react-burger-menu'
-import {FaShoppingCart} from 'react-icons/fa'
+import React,{useState,useEffect} from 'react';
+import {RiShoppingCartLine,RiArrowLeftSLine} from 'react-icons/ri'
+import { CartContext } from './contextprovider';
 const Navbar = () => {
+    const [cart,setCart] = React.useContext(CartContext);
     return (
         <div className="navbar">
-            <FaShoppingCart/>
-            <h1>Pizza Pepperoni</h1>
+            <RiArrowLeftSLine className="returnarrow"/>
+            <h1>Pepperoni Pizza</h1>
+            <div className="cartnav">
+            <RiShoppingCartLine className="cartbox"/>
+            <span style={{color: "white"}}>{cart.cart.pizza.length}</span>
+            </div>
         </div>
       );
 }

@@ -1,14 +1,22 @@
 // global colors
 $white: #fafafa;
-$yellow: #EFBE1E;
-$black: #011627;
-@import './navbar.scss';
+$yellow: #FFD56C;
+$black: #202341;
+$gray: #333333;
+$light-gray: #9E9E9E;
+$red: #DF3617;
+@import './navbar';
+@import './footer';
+@import './product';
 #__next{
   overflow: hidden;
+  background: $black;
 }
 #page-wrap{
   margin-top: 80px;
   margin-bottom: 120px;
+  min-height: calc(100vh - 80px - 120px);
+  overflow: hidden;
 }
 .head-text{
   text-align: center;
@@ -18,44 +26,7 @@ $black: #011627;
   align-items: center;
   text-align: center;
 }
-.product-image{
-  position: relative;
-}
-.product-price{
-  position: absolute;
-  bottom: 8px;
-  left: 8px;
-  color: $white !important;
-}
-.product-head{
-  position: relative;
-  svg{
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    font-size: 48px;
-    color: $black;
-  }
-}
-.btn-addcart{
-  font-weight: bold !important;
-  svg{
-    // margin-left: 8px;
-    font-size: 24px;
-  }
-}
-footer{
-  width: 100vw;
-  color: $white;
-  background-color: $black;
-  height: 96px;
-  position: fixed;
-  bottom: 0px;
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
+
 .headline > div{
   padding: 8pt !important;
 }
@@ -63,4 +34,22 @@ footer{
   .head-text {
     font-size: 5.2vw;
   }
+}
+.pizza-spinner{
+  transform: rotate(-45deg);
+  transition: 1s ease-in-out;
+  animation: 1s infinite pizzaspin;
+}
+@keyframes pizzaspin {
+  from {transform: rotate(0deg);}
+  to {transform: rotate(360deg);}
+}
+button, input[type="submit"], input[type="reset"] {
+	background: none;
+	color: inherit;
+	border: none;
+	padding: 0;
+	font: inherit;
+	cursor: pointer;
+	outline: inherit;
 }

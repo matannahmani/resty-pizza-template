@@ -17,7 +17,16 @@ export default function Home() {
         <title>Create Next App</title>
         <link rel="icon" href="/favicon.ico" />
     </Head>
-    <Product/>
+    <Grid.Container direction="column" gap={4} alignItems="center" justify="center">
+      <Grid>
+      <Card className="headline" type={"dark"}>
+        <Text className="head-text" h2 type={"warning"}>What would you like to order</Text>
+      </Card>
+      </Grid>
+      </Grid.Container>
+      <Grid.Container style={{padding: '40px'}} gap={2} alignItems="center" justify="space-evenly">
+        {pizzalist}
+      </Grid.Container>
     </>
   )
 }
