@@ -5,18 +5,26 @@ $black: #202341;
 $gray: #333333;
 $light-gray: #9E9E9E;
 $red: #DF3617;
+$spacer: 2vh;
+$spacer-xl: 4vh;
 @import './navbar';
 @import './footer';
 @import './product';
+@import './cart';
 #__next{
   overflow: hidden;
   background: $black;
 }
 #page-wrap{
   margin-top: 80px;
-  margin-bottom: 120px;
-  min-height: calc(100vh - 80px - 120px);
+  min-height: calc(100vh - 80px);
   overflow: hidden;
+}
+@media only screen and (min-width: 1280px) {
+  #page-wrap{
+    margin-top: 140px;
+    min-height: calc(100vh - 140px);
+  }
 }
 .head-text{
   text-align: center;
@@ -52,4 +60,18 @@ button, input[type="submit"], input[type="reset"] {
 	font: inherit;
 	cursor: pointer;
 	outline: inherit;
+}
+.glow {
+  animation: svg-shadow 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes svg-shadow {
+  from {
+    filter: drop-shadow( 0 0 5px #fff) drop-shadow( 0 0 15px #e60073) drop-shadow( 0 0 20px #e60073);
+  }
+
+  to {
+    
+    filter: drop-shadow( 0 0 20px #fff) drop-shadow( 0 0 25px #e60073) drop-shadow( 0 0 40px #e60073);
+  }
 }

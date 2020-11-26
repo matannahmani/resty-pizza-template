@@ -5,14 +5,14 @@
     align-items: center;
     justify-content: space-between;
     top: 0;
-    z-index: 99;
-    height: 80px;
+    z-index: 99999;
+    height: 60px;
     width: 100vw;
     background-color: $black;
     color: $white;
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     .returnarrow{
-        margin-left: 24px;
+        margin-left: $spacer-xl;
     }
     svg{
         font-size: 28px;
@@ -21,7 +21,7 @@
         position: relative;
         font-size: 32px;
         color: $white;
-        margin-right: 24px;
+        margin-right: $spacer-xl;
         span{
             position: absolute;
             right: -4px;

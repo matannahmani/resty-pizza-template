@@ -19,8 +19,8 @@ function MyApp({ Component, pageProps }) {
     }
   });
   const [cart, setCart] = useState({
-    oldcart: {pizza: [],burger: []},
-    cart: {pizza: [],burger: []}
+    oldcart: [],
+    cart: []
   })
   return(
     <CartContext.Provider value={[cart,setCart]}>

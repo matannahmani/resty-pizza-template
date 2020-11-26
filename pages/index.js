@@ -1,23 +1,26 @@
 import Head from 'next/head'
 import {Grid,Image,Text,Card} from '@geist-ui/react'
-import Product from '../components/product';
+import Productbox from '../components/productbox';
 import { CartContext } from '../components/contextprovider';
 export default function Home() {
 
-  let pizzalist = [];
-  for (let index = 0; index < 5;index++) {
-    pizzalist.push(
-    <Grid>
-      <Product id={index}/>
-    </Grid>)
-  }
+  // let pizzalist = [];
+  // for (let index = 0; index < 5;index++) {
+  //   pizzalist.push(
+  //   <Grid>
+  //     <Product id={index}/>
+  //   </Grid>)
+  // }
   return (
     <>
     <Head>
-        <title>Create Next App</title>
+        <title>Pizza Pepperoni</title>
         <link rel="icon" href="/favicon.ico" />
+        <meta name='viewport' 
+     content='width=device-width, initial-scale=1.0, maximum-scale=1.0, 
+     user-scalable=0' ></meta>
     </Head>
-    <Product/>
+    <Productbox/>
     </>
   )
 }

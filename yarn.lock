@@ -1076,6 +1076,62 @@
     lodash "^4.17.19"
     to-fast-properties "^2.0.0"
 
+"@egjs/agent@^2.2.1":
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/@egjs/agent/-/agent-2.2.1.tgz#fb144cc7183a5bb79c2fceeefb4a7b2826e9766f"
+  integrity sha512-SxrZbkYY/tdOmTLvuN/Jm5y/BgVw9l7H/jcdkI7DxO3Dv/6YFU20y+GYBGv+4rZTtmUs4luDucfHrU44IwWDOw==
+
+"@egjs/axes@^2.7.0":
+  version "2.7.2"
+  resolved "https://registry.yarnpkg.com/@egjs/axes/-/axes-2.7.2.tgz#8dd2c6ec53a4cb26c6c47721d2805b6d2fb23997"
+  integrity sha512-Ji2H2QlMimb+nLEBHSt+OuYvl04VwrmeMyvM3ImlzeOpXy96wY5Cl/re7TP40Ljpx/ttXBzHF6UnkOamW/+8Ng==
+  dependencies:
+    "@egjs/agent" "^2.2.1"
+    "@egjs/component" "^2.2.2"
+    "@egjs/hammerjs" "^2.0.15"
+
+"@egjs/children-differ@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@egjs/children-differ/-/children-differ-1.0.1.tgz#5465fa80671d5ca3564ebe912f48b05b3e8a14fd"
+  integrity sha512-DRvyqMf+CPCOzAopQKHtW+X8iN6Hy6SFol+/7zCUiE5y4P/OB8JP8FtU4NxtZwtafvSL4faD5KoQYPj3JHzPFQ==
+  dependencies:
+    "@egjs/list-differ" "^1.0.0"
+
+"@egjs/component@^2.2.1", "@egjs/component@^2.2.2":
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/@egjs/component/-/component-2.2.2.tgz#b8208ea4ca05f6562a51d58f1e6f9979aad8a9d9"
+  integrity sha512-2m6nu6/Mbs6VnoT4IHFGUBX6V82Zp01zDmlWpIJ3fMatHpe7BB1qUYFgMmSWGY0uOvOl4plvflwbCRUAGMfwWQ==
+
+"@egjs/flicking@^3.6.2":
+  version "3.6.3"
+  resolved "https://registry.yarnpkg.com/@egjs/flicking/-/flicking-3.6.3.tgz#89e843fc3db8afa79402dc874c4c5ed652987167"
+  integrity sha512-MlX3fuYIh7Jm109bluZZaKcDhdPk+ahcdUTcWwbg9L91ozbJ982O4D/5VBV5suR1xOcXHZYKz6cdloG1Qhtr3Q==
+  dependencies:
+    "@egjs/axes" "^2.7.0"
+    "@egjs/component" "^2.2.1"
+    "@egjs/list-differ" "^1.0.0"
+
+"@egjs/hammerjs@^2.0.15":
+  version "2.0.17"
+  resolved "https://registry.yarnpkg.com/@egjs/hammerjs/-/hammerjs-2.0.17.tgz#5dc02af75a6a06e4c2db0202cae38c9263895124"
+  integrity sha512-XQsZgjm2EcVUiZQf11UBJQfmZeEmOW8DpI1gsFeln6w0ae0ii4dMQEQ0kjl6DspdWX1aGY1/loyXnP0JS06e/A==
+  dependencies:
+    "@types/hammerjs" "^2.0.36"
+
+"@egjs/list-differ@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@egjs/list-differ/-/list-differ-1.0.0.tgz#2277aff52e3e4bd9318d5c30ffc3ba3b6216f05e"
+  integrity sha512-HsbMKc0ZAQH+EUeCmI/2PvTYSybmkaWwakU8QGDYYgMVIg9BQ5sM0A0Nnombjxo2+JzXHxmH+jw//yGX+y6GYw==
+
+"@egjs/react-flicking@^3.4.3":
+  version "3.4.3"
+  resolved "https://registry.yarnpkg.com/@egjs/react-flicking/-/react-flicking-3.4.3.tgz#f83952f932edd98d3120c7f1148f0aa1d38aa380"
+  integrity sha512-PMUEaLlLIDnO2Zk6CH74vEe7giaToHidtM9N+ZVSsCu+DzY9mVk7Fakjr8sTIcguse1SEhVA3QH9dbIz1qw4jA==
+  dependencies:
+    "@egjs/children-differ" "^1.0.1"
+    "@egjs/flicking" "^3.6.2"
+    "@egjs/list-differ" "^1.0.0"
+
 "@geist-ui/react@^2.1.0-canary.2":
   version "2.1.0-canary.2"
   resolved "https://registry.yarnpkg.com/@geist-ui/react/-/react-2.1.0-canary.2.tgz#cc90f193bd41c99e880413cda2dd867d43ef0063"
@@ -1140,6 +1196,11 @@
   integrity sha512-Uv6h1sT+0DrblvIrolFtbvM1FgWm+/sy4B3pvLp67Zys+thcukzS5ekn7HsZFGpWP4Q3fYJCljbWQE/XivMRLw==
   dependencies:
     mkdirp "^1.0.4"
+
+"@types/hammerjs@^2.0.36":
+  version "2.0.36"
+  resolved "https://registry.yarnpkg.com/@types/hammerjs/-/hammerjs-2.0.36.tgz#17ce0a235e9ffbcdcdf5095646b374c2bf615a4c"
+  integrity sha512-7TUK/k2/QGpEAv/BCwSHlYu3NXZhQ9ZwBYpzr9tjlPIL2C5BeGhH3DmVavRx3ZNyELX5TLC91JTz/cen6AAtIQ==
 
 "@types/json-schema@^7.0.5":
   version "7.0.6"
