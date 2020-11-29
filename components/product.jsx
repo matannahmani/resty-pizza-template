@@ -21,16 +21,18 @@ export default (props) =>{
   }, [props])
 
   const addCartToggle = () => {
-    if (cart.cart.some((e) => {
+    const updatecart = [...cart.cart]
+    let rowindex;
+    if (cart.cart.some((e,index) => {
       if (e.size === pizza.size && pizza.id === e.id){
-      e.amount += pizza.amount;
-      return true
-    }})){
-    }else{
-      const updatecart = [...cart.cart]
-      updatecart.push(pizza)
-      setCart({...cart, cart: updatecart});
+        rowindex = index;
+        return true;
+      }})){
+      updatecart[rowindex].amount += pizza.amount;
     }
+    else
+      updatecart.push(pizza)
+    setCart({...cart, cart: updatecart});
     setTimeout(() => {
       setToast({text: `${pizza.amount} ${pizza.name} ${pizza.size} added to cart`,type:"success"})
     }, 300);

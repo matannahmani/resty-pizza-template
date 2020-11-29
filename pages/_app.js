@@ -4,7 +4,7 @@ import {FaPizzaSlice} from 'react-icons/fa';
 import Navbar from '../components/navbar';
 import Footer from '../components/footer';
 import {UserContext,CartContext,} from '../components/contextprovider';
-import React, {useEffect,useState} from 'react';
+import React, {useEffect,useState, useRef} from 'react';
 import Router from 'next/router';
 const Loadingscreen = () => {
   return (
@@ -17,10 +17,12 @@ const Loadingscreen = () => {
 }
 
 function MyApp({ Component, pageProps }) {
+  const didMountRef = useRef(false);
   const [load, setLoad] = useState(false);
   Router.events.on('routeChangeStart', () => setLoad(true));
   Router.events.on('routeChangeComplete', () =>  setLoad(false));
   Router.events.on('routeChangeError', () => setLoad(false));
+
   const myTheme = {
     "palette": {
       "foreground": "#011627",
@@ -28,16 +30,29 @@ function MyApp({ Component, pageProps }) {
       "warningLight": "#efbe1e"
     }
   }
+
   const [user, setUser] = useState(
     {
       user: {
         logged: false
       }
     });
+
   const [cart, setCart] = useState({
     oldcart: [],
     cart: []
   })
+
+  useEffect(() => { // loads cart if saved at local storage
+    if (didMountRef.current === false){ // checks if first load
+      const savedcart = localStorage.getItem('cart'); // loads cart
+      if (savedcart !== null) // checks if not empty
+        setCart(JSON.parse(savedcart)); // load cart if not empty
+      didMountRef.current = true;
+    }else
+      localStorage.setItem('cart',JSON.stringify(cart)); // updates cart every time to local storage
+  }, [[],cart])
+  
   return(
     <CartContext.Provider value={[cart,setCart]}>
     <GeistProvider theme={myTheme}>
