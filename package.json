@@ -12,7 +12,6 @@
     "@geist-ui/react": "^2.1.0-canary.2",
     "next": "10.0.1",
     "react": "17.0.1",
-    "react-burger-menu": "^2.9.0",
     "react-dom": "17.0.1",
     "react-icons": "^3.11.0",
     "sass": "^1.29.0"

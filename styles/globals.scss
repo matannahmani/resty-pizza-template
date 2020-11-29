@@ -26,6 +26,15 @@ $spacer-xl: 4vh;
     min-height: calc(100vh - 140px);
   }
 }
+.jsx-492226652 img{
+  cursor: pointer;
+  user-drag: none; 
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
 .head-text{
   text-align: center;
   font-size: 48px;

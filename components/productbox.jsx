@@ -26,7 +26,7 @@ const Productbox = () => {
         :
         <div className="product-slider">
             <Flicking ref={flicking} onSelect = {(e) => {flicking.current.moveTo(e.index,500)}}  onChange = {(e) => setIndex(e.index)}   inputType = {["touch", "mouse"]} className="flicking flicking0"  autoResize = {true}
-  adaptive = {true}bound={true} gap={16} circular={true}>
+  adaptive = {true} gap={16} bound={true} anchor={'80px'} circular={true}>
                 
                 {pizzalist !== 'undefined' ? 
                 pizzalist.map((e) => 
