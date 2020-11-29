@@ -5,7 +5,7 @@
   flex-direction: column;
 }
 .flicking, .flicking0{
-  width: 504px;
+  width: 504px; // 160 * 3 + hanger setup for viewing only 3 pizzas at a time
   // max-width: 600px;
 }
 .slider-indicators{
