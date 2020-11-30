@@ -9,3 +9,34 @@
 .tr:hover{
     color: $gray;
 }
+label.jsx-1554126045{
+    color: $white !important;
+}
+.input-container.jsx-138055421{
+    background-color: $white;
+    border: 1.5px $black solid;
+    border-radius: 4px;
+}
+.input-wrapper.jsx-138055421{
+    border: none;
+}
+.MuiInputLabel-formControl, .MuiInputBase-input{
+    color: $white !important;
+}
+.MuiInput-underline:after{
+    border-bottom: 2px solid $black !important;
+}
+.MuiInput-underline:before{
+    border-bottom: 1px solid $white !important;
+}
+.label-shrink {
+    label {
+        font-size: 18px !important;
+    }
+}
+.black {
+    label,input {
+        color: $black !important;
+        text-align: center;
+    }
+}

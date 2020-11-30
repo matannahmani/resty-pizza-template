@@ -1,11 +1,11 @@
 import '../styles/globals.scss'
-import { GeistProvider, CssBaseline, Grid, Text, Card } from '@geist-ui/react'
+import { GeistProvider, CssBaseline, Text, Card } from '@geist-ui/react'
 import {FaPizzaSlice} from 'react-icons/fa';
 import Navbar from '../components/navbar';
-import Footer from '../components/footer';
 import {UserContext,CartContext,} from '../components/contextprovider';
 import React, {useEffect,useState, useRef} from 'react';
 import Router from 'next/router';
+
 const Loadingscreen = () => {
   return (
         <Card className="centerdiv" style={{textAlign: "center",fontSize: "2em"}} width={'50%'} shadow>
@@ -52,7 +52,7 @@ function MyApp({ Component, pageProps }) {
     }else
       localStorage.setItem('cart',JSON.stringify(cart)); // updates cart every time to local storage
   }, [[],cart])
-  
+
   return(
     <CartContext.Provider value={[cart,setCart]}>
     <GeistProvider theme={myTheme}>
