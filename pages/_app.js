@@ -34,7 +34,9 @@ function MyApp({ Component, pageProps }) {
   const [user, setUser] = useState(
     {
       user: {
-        logged: false
+        name: null,
+        address: null,
+        phone: null,
       }
     });
 
@@ -55,16 +57,18 @@ function MyApp({ Component, pageProps }) {
 
   return(
     <CartContext.Provider value={[cart,setCart]}>
+    <UserContext.Provider value={[user,setUser]}>
     <GeistProvider theme={myTheme}>
       <CssBaseline />
       <Navbar/>
       <main id="page-wrap">
         {load ? <Loadingscreen/>:
         <Component {...pageProps} />
-        }
+      }
       </main>
       {/* <Footer/> */}
     </GeistProvider>
+    </UserContext.Provider>
     </CartContext.Provider>
   )
 }
