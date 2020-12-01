@@ -11,7 +11,7 @@ const Cart = () => {
 
     return (
         <Grid.Container className="cartcard" alignItems="center" justify="center">
-            <Grid xs={24} md={6}>
+            <Grid xs={24} sm={18} md={12}>
             <Card style={{position: 'relative'}} type="violet" shadow>
 
                 {paid ? <Checkout paid={setPay}/> : <Carttable paid={setPay}/>}

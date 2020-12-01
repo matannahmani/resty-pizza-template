@@ -1,14 +1,42 @@
 
-import {Grid,Table,Button,Loading, useToasts} from '@geist-ui/react';
+import {Grid,Table,Button,Loading, useToasts, Spacer, Modal} from '@geist-ui/react';
 import React,{ useEffect, useState } from 'react';
 import { CartContext } from '../components/contextprovider';
 import {MdPayment} from 'react-icons/md';
+import {RiCoupon2Fill} from 'react-icons/ri'
+import TextField from '@material-ui/core/TextField';
 
 const Carttable = (props) => {
+    const [loading,setLoading] = useState(false);
     const [cart,setCart] = React.useContext(CartContext);
     const [data,setData] = useState(undefined);
-    const [, setToast] = useToasts()
+    const [, setToast] = useToasts();
+    const [state, setState] = useState(false);
+    const coupon = React.createRef();
+    const handler = () => setState(true);
+    const [discount,setDiscount] = useState(1);
 
+    const closeHandler = (event) => {
+      setState(false);
+      setLoading(false);
+    }
+
+    const couponHandler = () => {
+        setLoading(true)
+        setTimeout(() => {
+            setLoading(false);
+            setToast({text: `10% off applied`,type: "success"})
+            setDiscount(0.9);
+            setState(false);
+        }, 500);
+    }
+    const ordertotal = (discounton) =>{
+        let count = 0;
+        cart.cart.forEach((e) => {
+            count += e.amount * e.price;
+        })
+        return discounton ? (count * discount).toFixed(2) : count.toFixed(2)
+    }
     const operation = (actions, rowData) => {
         return (
             <>
@@ -42,7 +70,7 @@ const Carttable = (props) => {
         const mydata = []
         if (cart.cart.length > 0)
             cart.cart.forEach((e) => {
-                mydata.push({id: e.id, size: e.size,product: `${e.name} - ${e.size}`,amount: e.amount, operation});
+                mydata.push({id: e.id, size: e.size,product: `${e.name} - ${e.size}`,amount: e.amount,price: e.price, operation});
             });
         else
             setData({product: `none`, amount: `none`, operation})
@@ -51,11 +79,15 @@ const Carttable = (props) => {
 
     return (
         <>
-        <h3 style={{textAlign: "center",color: "#FAFAFA"}}>Order Total</h3>
+        <div className="cart-total">
+        <h3 style={{textAlign: "center",color: "#FAFAFA"}}>Order Total : {ordertotal(true)} $</h3>
+    {discount !== 1 ?  <span>Original Price: {ordertotal(false)}$</span> : null}
+        </div>
         <Table data={data} hover={false}>
         <Table.Column prop="product" label="product" />
         <Table.Column prop="amount" label="amount" />
-        <Table.Column prop="operation" label="operation" width={150} />
+        <Table.Column prop="price" label="price" />
+        <Table.Column prop="operation" label="operation" />
         </Table>
         {cart.cart.length < 1 ? 
         <Grid>                    
@@ -64,12 +96,22 @@ const Carttable = (props) => {
         : 
         <>
         <Grid.Container justify="flex-end" style={{paddingTop: '16px'}} alignItems="center">
-            <Grid>
-                <Button className="checkoutbtn" onClick={() => {setToast({text: 'SOON', type: "success"});props.paid(true);}} ghost size={"small"} shadow icon={<MdPayment/>}>Check Out</Button>
+            <Grid justify="space-between">
+                <Button onClick={handler} ghost size={"small"} shadow icon={<RiCoupon2Fill/>}>Coupon</Button>
+                <Spacer inline={true}/>
+                <Button onClick={() => {setToast({text: 'SOON', type: "success"});props.paid(true);}} ghost size={"small"} shadow icon={<MdPayment/>}>Check Out</Button>
             </Grid>
         </Grid.Container>
         </>
         }
+        <Modal open={state} onClose={closeHandler}>
+        <Modal.Title>Enter Your Coupon</Modal.Title>
+        <Modal.Content style={{textAlign: "center"}}>
+        <TextField ref={coupon} id="form-code" className="label-shrink black" label="Code" />
+        </Modal.Content>
+        <Modal.Action passive onClick={() => setState(false)}>Cancel</Modal.Action>
+        <Modal.Action loading={loading} onClick={couponHandler}>Submit</Modal.Action>
+      </Modal>
         </>
     )
 }

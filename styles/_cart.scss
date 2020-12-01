@@ -3,6 +3,12 @@
         color: $white !important;
     }
 }
+.content.jsx-2956695818{
+    overflow-x: scroll;
+}
+.card {
+    transition: height ease-in-out 1s !important;
+}
 .cell{
     color: $white;
 }
@@ -20,15 +26,12 @@ label.jsx-1554126045{
 .input-wrapper.jsx-138055421{
     border: none;
 }
-.MuiInputLabel-formControl, .MuiInputBase-input{
-    color: $white !important;
+.cart-text-white{
+    label, input{
+        color: $white !important;
+    }
 }
-.MuiInput-underline:after{
-    border-bottom: 2px solid $black !important;
-}
-.MuiInput-underline:before{
-    border-bottom: 1px solid $white !important;
-}
+
 .label-shrink {
     label {
         font-size: 18px !important;
@@ -38,5 +41,23 @@ label.jsx-1554126045{
     label,input {
         color: $black !important;
         text-align: center;
+    }
+}
+.MuiInput-underline:after{
+    border-bottom: 2px solid $black !important;
+}
+.clean > div:before{
+    border-bottom: 1px solid $white;
+}
+.error:before {
+    border-bottom: 1px solid red !important;
+}
+.cart-total{
+    position: relative;
+    span{
+        position: absolute;
+        top: -20px;
+        right: -8px;
+        color: red;
     }
 }

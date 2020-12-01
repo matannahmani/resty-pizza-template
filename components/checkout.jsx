@@ -20,6 +20,10 @@ const Checkout = (props) => {
     const [modal, setModal] = useState(false)
     const [user,setUser] = React.useContext(UserContext);
     const [, setToast] = useToasts()
+    const name = React.createRef();
+    const address = React.createRef();
+    const phone = React.createRef();
+    const inputarray = [name,address,phone];
     let timer = 0;
     const closeHandler = (event) => {
       setModal(false)
@@ -32,24 +36,22 @@ const Checkout = (props) => {
         }, 1000);
     }
     const verifyHandler = () => {
-        const name = document.getElementById('form-name');
-        const address = document.getElementById('form-address');
-        const phone = document.getElementById('form-phone');
         const regex = /^\+?(972\-?)?0?(([23489]{1}\-?\d{7})|[5]{1}\d{1}\-?\d{7})$/
-        if (name.value.length > 3 && address.value.length > 3 && phone.value.length > 3 ){
-            if (phone.value.match(regex)){
+        if (name.current.value.length > 3 && address.current.value.length > 3 && phone.current.value.length > 3 ){
+            if (phone.current.value.match(regex)){
                 setModal(true);
                 setVerify({...verify,loading: true});
             }else{
             setToast({type: 'error', text: 'Please enter vaild phone: EX: 0541234567'});
+            phone.current.parentElement.classList.add('error')
             }
         }else{
             setToast({type: 'error', text: 'Please enter vaild information'});
+            inputarray.forEach( e => {
+                if (e.current.value.length < 3)
+                e.current.parentElement.classList.add('error');
+            })
         }
-
-        // setUser({user: {
-        //     address:
-        // }})
     }
 
     return (
@@ -62,15 +64,15 @@ const Checkout = (props) => {
         <Spacer/>
         <form id="order-form" className={classes.root} noValidate autoComplete="off">
         <Grid>
-            <TextField id="form-name" className="label-shrink" label="Full Name" />
+            <TextField inputRef={name} id="form-name" className="label-shrink cart-text-white" label="Full Name" />
         </Grid>
         <Spacer/>
         <Grid>
-        <TextField id="form-address" className="label-shrink" label="Address" />
+        <TextField inputRef={address}id="form-address" className="label-shrink cart-text-white" label="Address" />
         </Grid>
         <Spacer/>
         <Grid>
-        <TextField id="form-phone" className="label-shrink" label="Phone" />
+        <TextField inputRef={phone} id="form-phone" className="label-shrink cart-text-white" label="Phone" />
         </Grid>
         <Spacer/>
         </form>
