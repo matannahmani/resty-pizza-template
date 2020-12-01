@@ -15,6 +15,7 @@ const Carttable = (props) => {
     const coupon = React.createRef();
     const handler = () => setState(true);
     const [discount,setDiscount] = useState(1);
+    const couponsarray = [{code: '10OFF',discount: 0.9},{code: '20OFF',discount: 0.80}];
 
     const closeHandler = (event) => {
       setState(false);
@@ -23,11 +24,17 @@ const Carttable = (props) => {
 
     const couponHandler = () => {
         setLoading(true)
-        setTimeout(() => {
+        const code = coupon.current.value;
+        setTimeout( () => {
             setLoading(false);
-            setToast({text: `10% off applied`,type: "success"})
-            setDiscount(0.9);
-            setState(false);
+            if( couponsarray.some (e => e.code === code)){
+                const endresult = couponsarray.find(e => e.code === code);
+                setToast({text: `${(100 - endresult.discount * 100).toFixed(0)}% off applied`,type: "success"})
+                setDiscount(endresult.discount);
+                setState(false);
+            }else{
+                setToast({text: `Invaild Coupon`,type: "warning"})
+            }
         }, 500);
     }
     const ordertotal = (discounton) =>{
@@ -107,7 +114,7 @@ const Carttable = (props) => {
         <Modal open={state} onClose={closeHandler}>
         <Modal.Title>Enter Your Coupon</Modal.Title>
         <Modal.Content style={{textAlign: "center"}}>
-        <TextField ref={coupon} id="form-code" className="label-shrink black" label="Code" />
+        <TextField inputRef={coupon} id="form-code" className="label-shrink black" label="Code" />
         </Modal.Content>
         <Modal.Action passive onClick={() => setState(false)}>Cancel</Modal.Action>
         <Modal.Action loading={loading} onClick={couponHandler}>Submit</Modal.Action>

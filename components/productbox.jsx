@@ -42,7 +42,7 @@ const Productbox = () => {
                         else
                         {
                             return(
-                                <Image src={`${e.img}.png`} width={160} height={160}/>
+                                <Image key={e.id} src={`${e.img}.png`} width={160} height={160}/>
                             )
                         }
                 })
