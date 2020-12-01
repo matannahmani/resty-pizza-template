@@ -10,7 +10,7 @@ const Navbar = () => {
             <div className="returnnav" style={{cursor: 'pointer'}} onClick={() => Router.back()}>
                 <RiArrowLeftSLine className="returnarrow"/>
             </div>
-            <h1>Pepperoni Pizza</h1>
+            {/* <h1>Pepperoni Pizza</h1> */}
             <div className="cartnav" style={{cursor: 'pointer'}} onClick={() => Router.push('/cart')}>
                 <RiShoppingCartLine className="cartbox"/>
                 <span style={{color: "white"}}>{cart.cart.length}</span>
