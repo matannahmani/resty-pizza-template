@@ -13,7 +13,7 @@ const Dashboard = () => {
                 </Link>
             </Grid>
             <Grid>
-                <Link href="orders">
+                <Link href="products">
                 <Button shadow><Text b>Product List</Text></Button>
                 </Link>
             </Grid>

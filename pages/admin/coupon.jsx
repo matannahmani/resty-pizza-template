@@ -6,7 +6,7 @@ import React from 'react';
 
 const Coupon = () => {
     const operation = (actions, rowData) => {
-        return <Button size="mini" shadow auto onClick={(e) => handler(rowData,actions)}>Show Modal</Button>
+        return <Button size="mini" shadow auto onClick={(e) => handler(rowData,actions)}>Show Coupon</Button>
     }
     const enabled = (actions, rowData) => {
         return (rowData.rowValue.status) ? <TiTick fontSize="24px"/> : <TiCancel fontSize="24px"/>
@@ -70,7 +70,7 @@ const Coupon = () => {
         <Grid.Container alignItems={"center"} justify={"center"}>
         <Grid style={{overflow: 'auto'}} alignItems={"center"} justify={"center"}>
         <Card type="violet" shadow>
-            <Text h1 size="24px" className="align-center" bold>Coupon Control Panel</Text>
+            <Text h1 size="24px" className="align-center">Coupon Control Panel</Text>
         <Table hover={false} className="table-white" data={data}>
           <Table.Column prop="code" label="code" />
           <Table.Column prop="discount" label="discount" />
@@ -90,19 +90,19 @@ const Coupon = () => {
         <Modal.Title>Coupon</Modal.Title>
         <Modal.Subtitle>
             {(coupon.code === '') ? <>
-            <Input ref={cpcode}label="code" className="no-hover" clearable width="200px" style={{textAlign: "center"}} placeholder="10OFF"></Input>
+            <Input ref={cpcode}label="code" className="no-hover" clearable width="200px" style={{textAlign: "center"}} placeholder="10OFF"/>
             </>
             :
-            coupon.code    
+            <span>{coupon.code}</span>
         }
         </Modal.Subtitle>
         <Modal.Content>
-            <Text className="align-center">
+        <Text className="align-center">
             {(coupon.discount === '') ? <>
             <Input ref={cpdiscount} label="discount" type="number" min="1" max="50" className="no-hover" clearable labelRight="%" width="200px" style={{textAlign: "center"}} placeholder="20"></Input>
             </>
             :
-            coupon.discount    
+            <span>{coupon.discount}</span>
         }
             </Text>
         </Modal.Content>
