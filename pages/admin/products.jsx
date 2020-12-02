@@ -102,7 +102,9 @@ const Products = () => {
         </Grid.Container>
         <Modal open={state} onClose={closeHandler}>
         <Modal.Title>Pizza</Modal.Title>
+        <Spacer/>
         <Modal.Subtitle>
+            
             {(pizza.name === '') ? <>
             <Input ref={pzcode}label="name" className="no-hover" clearable width="200px" style={{textAlign: "center"}} placeholder="Pepperoni"></Input>
             </>
@@ -110,6 +112,7 @@ const Products = () => {
             pizza.name    
         }
         </Modal.Subtitle>
+        <Spacer/>
         <Modal.Content>
             <Text className="align-center">
             {(pizza.price === '') ? <>
@@ -133,6 +136,7 @@ const Products = () => {
             </>
             }
         </Modal.Content>
+        <Spacer/>
         <Modal.Action passive onClick={() => setState(false)}>Cancel</Modal.Action>
         <Modal.Action>{<Toggle onChange={(e) => toggleHandler(e)}  initialChecked={pizza.status}/>}</Modal.Action>
         {pizza.name === '' ? 

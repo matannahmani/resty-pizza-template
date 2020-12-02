@@ -21,7 +21,7 @@ const admin = () => {
     }, [])
     return (
         <Grid.Container gap={2} alignItems={"center"} justify={"center"}>
-            <Grid xs={12} md={12} xl={12} >
+            <Grid xs={20} md={12} xl={12} >
             <Card shadow type={"lite"}>
             <Spacer/>
             <Input placeholder="Admin">
