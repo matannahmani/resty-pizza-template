@@ -72,6 +72,23 @@ button, input[type="submit"], input[type="reset"] {
 }
 .glow {
   animation: svg-shadow 1.5s ease-in-out infinite alternate;
+  cursor: pointer;
+}
+.table-white > tbody > tr > td{
+  color: $white !important;
+}
+.no-hover > div{
+  border-color: transparent !important;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
 }
 .centerdiv {
   position: fixed;

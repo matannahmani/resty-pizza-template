@@ -102,7 +102,8 @@ const Carttable = (props) => {
         </Grid>
         : 
         <>
-        <Grid.Container justify="flex-end" style={{paddingTop: '16px'}} alignItems="center">
+        <Spacer/>
+        <Grid.Container justify="flex-end" alignItems="center">
             <Grid justify="space-between">
                 <Button onClick={handler} ghost size={"small"} shadow icon={<RiCoupon2Fill/>}>Coupon</Button>
                 <Spacer inline={true}/>

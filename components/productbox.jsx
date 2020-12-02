@@ -16,6 +16,15 @@ const Productbox = () => {
         setpizzaList([pizzaone,pizzatwo,pizzathree])
         setLoading(false);
     }, [])
+    const moveHandler = (next) => {
+        const flick = flicking.current;
+        if (next)
+            (flick.getIndex() === pizzalist.length -1) ? flick.moveTo(0,500) : flick.moveTo(flick.getIndex() + 1,500); // foward
+        else
+            (flick.getIndex() === 0) ? flick.moveTo(pizzalist.length - 1,500) : flick.moveTo(flick.getIndex() - 1,500); // backward
+        
+        console.log(flick.getIndex());
+    }
     return (
         
         <>
@@ -49,8 +58,8 @@ const Productbox = () => {
                 : console.log(false)}
             </Flicking>
             <div className="slider-indicators">
-            <RiArrowLeftSLine onClick={() => flicking.current.prev(500)} className="glow" />
-            <RiArrowLeftSLine onClick={() => flicking.current.next(500)} className="right glow"/>
+            <RiArrowLeftSLine onClick={() => moveHandler(false)} className="glow" />
+            <RiArrowLeftSLine onClick={() => moveHandler(true)} className="right glow"/>
             </div>
             <Product pizza={{...pizzalist[pizzaindex]}}/>
         </div>

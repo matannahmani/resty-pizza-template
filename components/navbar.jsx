@@ -7,7 +7,7 @@ const Navbar = () => {
     const Router = useRouter();
     return (
         <div className="navbar">
-            <div className="returnnav" style={{cursor: 'pointer'}} onClick={() => Router.back()}>
+            <div className="returnnav" style={{cursor: 'pointer'}} onClick={() => (location.pathname !== '/') ? Router.back() : null}>
                 <RiArrowLeftSLine className="returnarrow"/>
             </div>
             {/* <h1>Pepperoni Pizza</h1> */}
