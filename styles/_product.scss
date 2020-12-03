@@ -6,7 +6,6 @@
 }
 .flicking, .flicking0{
   width: 504px; // 160 * 3 + hanger setup for viewing only 3 pizzas at a time
-  // max-width: 600px;
 }
 .slider-indicators{
   display: flex;
@@ -51,7 +50,6 @@
     justify-content: space-around;
     .option{
       width: 86px;
-      height: 100%;
       font-size: 22px;
       background: $gray;
       color: $light-gray;
@@ -104,9 +102,6 @@
     }
   }
   @media only screen and (min-width: 1280px) {
-    .navbar{
-      height: 120px;
-    }
     .slider-indicators{
       margin: 4vh;
       svg{

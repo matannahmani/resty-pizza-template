@@ -105,9 +105,9 @@ const Carttable = (props) => {
         <Spacer/>
         <Grid.Container justify="flex-end" alignItems="center">
             <Grid justify="space-between">
-                <Button onClick={handler} ghost size={"small"} shadow icon={<RiCoupon2Fill/>}>Coupon</Button>
+                <Button onClick={handler} ghost auto size="medium" shadow icon={<RiCoupon2Fill/>}>Coupon</Button>
                 <Spacer inline={true}/>
-                <Button onClick={() => {setToast({text: 'SOON', type: "success"});props.paid(true);}} ghost size={"small"} shadow icon={<MdPayment/>}>Check Out</Button>
+                <Button onClick={() => {setToast({text: 'SOON', type: "success"});props.paid(true);}} ghost auto size="medium" shadow icon={<MdPayment/>}>Check Out</Button>
             </Grid>
         </Grid.Container>
         </>

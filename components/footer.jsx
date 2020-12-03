@@ -1,15 +1,9 @@
 import {FaHamburger,FaPizzaSlice} from 'react-icons/fa'
-export default () => {
+const Footer = () =>{
     return (
         <footer>
-        <div className="footer-nav">
-        <FaHamburger/>
-        <span>Marchi Burger</span>
-        </div>
-        <div className="footer-nav">
-        <FaPizzaSlice/>
-        <span>Pepperoni Pizza</span>
-        </div>
+            <span>built by Matan 2020</span>
         </footer>
     )
 }
+export default Footer;

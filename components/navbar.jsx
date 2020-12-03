@@ -6,7 +6,7 @@ const Navbar = () => {
     const [cart,setCart] = React.useContext(CartContext);
     const Router = useRouter();
     return (
-        <div className="navbar">
+        <header className="navbar">
             {(Router.pathname !== '/') ?
             <div className="returnnav" style={{cursor: 'pointer'}} onClick={() => (Router.pathname !== '/') ? Router.back() : null}>
             <RiArrowLeftSLine className="returnarrow"/>
@@ -19,7 +19,7 @@ const Navbar = () => {
                 <RiShoppingCartLine className="cartbox"/>
                 <span style={{color: "white"}}>{cart.cart.length}</span>
             </div>
-        </div>
+        </header>
       );
 }
 export default Navbar;

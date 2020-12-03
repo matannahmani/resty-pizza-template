@@ -16,16 +16,22 @@ $spacer-xl: 4vh;
   background: $black;
 }
 #page-wrap{
-  margin-top: 80px;
-  min-height: calc(100vh - 80px);
   overflow: hidden;
+  min-height: calc(100vh - 130px);
+  padding-top: 80px;
+  padding-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-@media only screen and (min-width: 1280px) {
-  #page-wrap{
-    margin-top: 140px;
-    min-height: calc(100vh - 140px);
-  }
+.content-center{
+  margin-bottom: 130px;
+  width: 100%;
 }
+header{
+  height: 80px;
+}
+
 .jsx-492226652 img{
   cursor: pointer;
   user-drag: none; 
@@ -57,9 +63,19 @@ $spacer-xl: 4vh;
   transition: 1s ease-in-out;
   animation: 1s infinite pizzaspin;
 }
+.logo-spinner{
+  transition: 1s ease-in-out;
+  animation: 2s infinite logospin;
+
+}
 @keyframes pizzaspin {
   from {transform: rotate(0deg);}
   to {transform: rotate(360deg);}
+}
+@keyframes logospin {
+  50%,100%{
+    transform: rotate(360deg);
+  }
 }
 button, input[type="submit"], input[type="reset"] {
 	background: none;
