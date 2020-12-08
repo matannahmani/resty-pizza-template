@@ -1,25 +1,37 @@
 import {Table,Text,Button,Grid,Card,useToasts,Modal,Toggle,Spacer,Input} from '@geist-ui/react';
-import {useState,useEffect} from 'react';
+import {useState} from 'react';
 import {TiTick,TiCancel} from 'react-icons/ti';
 import {RiCoupon2Fill} from 'react-icons/ri';
 import React from 'react';
-
-const Coupon = () => {
+import {apipostCoupon,apigetCoupon,apipatchCoupon,apideleteCoupon} from '../../lib/apicontroller';
+  const Coupon = (props) => {
     const operation = (actions, rowData) => {
         return <Button size="mini" shadow auto onClick={(e) => handler(rowData,actions)}>Show Coupon</Button>
     }
     const enabled = (actions, rowData) => {
         return (rowData.rowValue.status) ? <TiTick fontSize="24px"/> : <TiCancel fontSize="24px"/>
     }
+    const dataHandler = () =>{
+        // to do add checking if array
+        if (props.code === 200)
+        {
+            let datalist = []
+            props.data.forEach (item => {
+                datalist.push({...item,discount: `${item.discount}%`,operation,enabled})
+            });
+            return datalist;
+        }
+        else{
+            return []
+        }
+    }
     const [state, setState] = useState(false)
     const [, setToast] = useToasts();
     const [coupon, setCoupon] = useState({code: '', discount: '',enabled: false});
     const cpcode = React.useRef();
     const cpdiscount = React.useRef();
-    const [data,setData] = useState([
-        { code: '10OFF', discount: '10%',status: false, enabled, operation },
-        { code: '20OFF', discount: '20%',status: true, enabled, operation },
-        ]);
+    const [data,setData] = useState(dataHandler);
+
     const handler = (e,actions) => {
         setCoupon({...e.rowValue,remove: actions.remove,update: actions.update});
         setState(true);
@@ -34,19 +46,25 @@ const Coupon = () => {
         const updatedata = [...data];
         updatedata.splice(index,1);
         setData([...updatedata]);
+        apideleteCoupon({id: index});
         setState(false);
     }
     const addCouponHandler = () => {
         setCoupon({code: '', discount: '', status: true, enabled, operation})
         setState(true);
     }
-    const postCoupon = () => {
+    const postCoupon = async () => {
         if (cpcode.current.value.length > 2 && cpdiscount.current.value.length > 1)
         {
             if (cpdiscount.current.value > 0 && cpdiscount.current.value < 51){
                 setToast({type: 'success',text: `CODE : ${cpcode.current.value} added successfully`})
-                setData([...data,{...coupon,code: cpcode.current.value, discount: cpdiscount.current.value}])
-                // post to server should be here
+                const newcp = {...coupon,code: cpcode.current.value, discount: cpdiscount.current.value};
+                const result = await apipostCoupon((({ operation, enabled, ...o }) => o)(newcp) );
+                if (result.code === 200){
+                    newcp.id = result.data.id;
+                    (data !== undefined ) ? setData([...data,newcp]) : setData([newcp]);
+
+                }
                 return setState(false);
             }
         }
@@ -61,12 +79,13 @@ const Coupon = () => {
             updatedate[index].status = e.target.checked;
             setData([...updatedate])
             coupon.update();
+            apipatchCoupon({status: e.target.checked,id: coupon.id});
             setToast({type: 'success',text: `CODE : ${coupon.code} was ${(e.target.checked) ? `enabled` : `disabled`}`})
         }
     }
 
       return (
-        <>
+          <>
         <Grid.Container alignItems={"center"} justify={"center"}>
         <Grid style={{overflow: 'auto'}} alignItems={"center"} justify={"center"}>
         <Card type="violet" shadow>
@@ -117,4 +136,14 @@ const Coupon = () => {
         </>
       )
 }
+
 export default Coupon;
+export const getStaticProps = async () => {
+    // Get external data from the file system, API, DB, etc.
+    const data = await apigetCoupon();
+    const unseralized = [];
+    await data.data.data.forEach(i => unseralized.push(i.attributes)); // please fix in the future it hurts my eyes jesus fast api what a mess
+    return {
+      props: {data: unseralized,code: data.code}
+    }
+  }

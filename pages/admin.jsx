@@ -24,20 +24,20 @@ const admin = () => {
             <Grid xs={20} md={12} xl={12} >
             <Card shadow type={"lite"}>
             <Spacer/>
-            <Input placeholder="Admin">
+            <Input placeholder="Admin" width="240px">
             <Dot color="black" type="success">
                 Username
             </Dot>
             </Input>
             <Spacer/>
-            <Input.Password>
+            <Input.Password width="240px">
             <Dot color="black" type="success">
                 Password
             </Dot>
             </Input.Password>
             <Spacer/>
             <Grid style={{textAlign: "center"}}>
-                <Button loading={loading} shadow onClick={loginHandler} type="secondary">Login</Button>
+                <Button loading={loading} shadow size="medium" auto onClick={loginHandler} type="secondary">Login</Button>
             </Grid>
             </Card>
             </Grid>

@@ -14,6 +14,16 @@
 }
 .cell{
     color: $white;
+    justify-content: center;
+    padding: 16px 0px;
+    align-items: center;
+    // flex-wrap: wrap !important;
+    button {
+        margin: 8px !important;
+    }
+}
+.thead-box{
+    justify-content: center;
 }
 .tr:hover{
     color: $gray;

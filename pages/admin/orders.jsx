@@ -1,71 +1,79 @@
 import {Table,Text,Button,Grid,Card,useToasts,Modal,Toggle,Spacer,Input} from '@geist-ui/react';
-import {useState,useEffect} from 'react';
+import {useState} from 'react';
 import {TiTick,TiCancel} from 'react-icons/ti';
-import {RiCoupon2Fill} from 'react-icons/ri';
+import {RiTakeawayFill,RiRestaurantFill} from 'react-icons/ri';
 import React from 'react';
 
-const orders = () => {
+const order = () => {
     const operation = (actions, rowData) => {
         return (
-        [<Button key="close-order" size="mini" shadow auto onClick={removeHandler}>Close Order</Button>,
+        [<Button key="close-order" size="mini" auto shadow onClick={() => removeHandler(rowData)}>Close Order</Button>,
         <Spacer key="spacer-order"/>,
-        <Button key="show-order" size="mini" shadow auto onClick={(e) => handler(rowData,actions)}>Show orders</Button>]
+        <Button key="show-order" size="mini" auto shadow onClick={(e) => handler(rowData,actions)}>Show Order</Button>]
         )
     }
     const shipped = (actions, rowData) => {
-        return (rowData.rowValue.status) ? <TiTick fontSize="24px"/> : <TiCancel fontSize="24px"/>
+        return (rowData.rowValue.isshipped) ? <TiTick fontSize="24px"/> : <TiCancel fontSize="24px"/>
+    }
+    const deliverytype = (actions, rowData) => {
+        return (rowData.rowValue.takeaway) ? <RiRestaurantFill fontSize="24px"/> : <RiTakeawayFill fontSize="24px"/>
+    }
+    const pizzalist = (actions, rowData) => {
+        return rowData.rowValue.items.map((e,index) => <Text key={index} style={{margin: '4px 0px'}}>{e[0]} - {e[1]}</Text>)
+        // return string
     }
     const [state, setState] = useState(false)
     const [, setToast] = useToasts();
-    const [orders, setCoupon] = useState({code: '', discount: '',shipped: false});
+    const [order, setOrder] = useState({products: '', delivery: '',isshipped: false});
     const cpcode = React.useRef();
     const cpdiscount = React.useRef();
     const [data,setData] = useState([
-        { code: '10OFF', discount: '10%',status: false, shipped, operation },
-        { code: '20OFF', discount: '20%',status: true, shipped, operation },
+        { name: 'Matan Nahmani', address: 'Kliel ha Horesh 26', items: [['Pepperoni Pizza',2],['Shrimps Pizza',3]], takeaway: false,isshipped: false, shipped, delivery: deliverytype, operation, products: pizzalist},
+        { name: 'Matan Nahmani', address: 'Kliel ha Horesh 27', items: [['Pepperoni Pizza',2],['Shrimps Pizza',3]], takeaway: false,isshipped: false, shipped, delivery: deliverytype, operation, products: pizzalist}
         ]);
     const handler = (e,actions) => {
-        setCoupon({...e.rowValue,remove: actions.remove,update: actions.update});
+        setOrder({...e.rowValue,remove: actions.remove,update: actions.update});
         setState(true);
     }
     const closeHandler = (event) => {
         setState(false)
     }
 
-    const removeHandler = () => {
-        setToast({type: 'warning',text: `CODE : ${orders.code} was removed`})
-        const index = data.findIndex(e => e.code === orders.code)
-        const updatedata = [...data];
-        updatedata.splice(index,1);
-        setData([...updatedata]);
-        setState(false);
+    const removeHandler = (rowData) => {
+        const index = data.findIndex(e => e.name === rowData.rowValue.name && e.address === rowData.rowValue.address )
+        if (confirm(`Are you sure you want to close order ${index+1}`)){    
+            setToast({type: 'warning',text: `Order : ${index+1} was removed`})
+            const updatedata = [...data];
+            updatedata.splice(index,1);
+            setData([...updatedata]);
+            setState(false);
+        }
     }
     const addCouponHandler = () => {
-        setCoupon({code: '', discount: '', status: true, shipped, operation})
+        setOrder({products: '', delivery: '', status: true, shipped, operation})
         setState(true);
     }
     const postCoupon = () => {
         if (cpcode.current.value.length > 2 && cpdiscount.current.value.length > 1)
         {
             if (cpdiscount.current.value > 0 && cpdiscount.current.value < 51){
-                setToast({type: 'success',text: `CODE : ${cpcode.current.value} added successfully`})
-                setData([...data,{...orders,code: cpcode.current.value, discount: cpdiscount.current.value}])
+                setToast({type: 'success',text: `products : ${cpcode.current.value} added successfully`})
+                setData([...data,{...order,products: cpcode.current.value, delivery: cpdiscount.current.value}])
                 // post to server should be here
                 return setState(false);
             }
         }
-        setToast({type: 'error',text: 'orders must have 3 letters and discount is capped at 50%'})
+        setToast({type: 'error',text: 'order must have 3 letters and delivery is capped at 50%'})
     }
     const toggleHandler = (e) => {
-        setCoupon({...orders, status:e.target.checked})
-        if (orders.code !== ''){
+        setOrder({...order, isshipped:e.target.checked})
+        if (order.items !== ''){
             const updatedate = [...data];
-            console.log(updatedate);
-            const index = updatedate.findIndex((e) => e.code === orders.code);
-            updatedate[index].status = e.target.checked;
+            const index = updatedate.findIndex((e) => e.name === order.name && e.address === order.address && e.items === order.items);
+            updatedate[index].isshipped = e.target.checked;
             setData([...updatedate])
-            orders.update();
-            setToast({type: 'success',text: `CODE : ${orders.code} was ${(e.target.checked) ? `shipped` : `disabled`}`})
+            order.update();
+            setToast({type: 'success',text: `Order : ${index+1} was ${(e.target.checked) ? `shipped` : `disabled`}`})
         }
     }
 
@@ -74,53 +82,42 @@ const orders = () => {
         <Grid.Container alignItems={"center"} justify={"center"}>
         <Grid style={{overflow: 'auto'}} alignItems={"center"} justify={"center"}>
         <Card type="violet" shadow>
-        <Text h1 size="24px" className="align-center">Total Orders : {data.length}</Text>
+        <Text h1 size="24px" className="align-center">Total orders : {data.length}</Text>
         <Table hover={false} className="table-white" data={data}>
           <Table.Column prop="name" label="name" />
           <Table.Column prop="address" label="address" />
-          <Table.Column prop="code" label="code" />
-          <Table.Column prop="discount" label="discount" />
+          <Table.Column prop="products" label="products" width={200} />
+          <Table.Column prop="delivery" label="delivery" />
           <Table.Column prop="shipped" label="shipped" />
-          <Table.Column prop="operation" label="operation" />
+          <Table.Column c prop="operation" label="operation" />
         </Table>
-        <Spacer/>
-        <Grid.Container justify="flex-end" alignItems="center">
-            <Grid>
-                <Button size="mini" shadow auto icon={<RiCoupon2Fill/>} onClick={addCouponHandler}>Add orders</Button>
-            </Grid>
-        </Grid.Container>
         </Card>
         </Grid>
         </Grid.Container>
         <Modal open={state} onClose={closeHandler}>
-        <Modal.Title>orders</Modal.Title>
+        <Modal.Title>Order Number : {data.findIndex(e => e.name === order.name && e.address === order.address && e.items === order.items ) +1}</Modal.Title>
         <Modal.Subtitle>
-            {(orders.code === '') ? <>
-            <Input ref={cpcode}label="code" className="no-hover" clearable width="200px" style={{textAlign: "center"}} placeholder="10OFF"/>
-            </>
-            :
-            <span>{orders.code}</span>
-        }
+            {order.items !== undefined ? order.items.map((e,index) => <Text key={index} style={{margin: '4px 0px'}}>{e[0]} - {e[1]}</Text>) : null}
         </Modal.Subtitle>
         <Modal.Content>
         <Text className="align-center">
-            {(orders.discount === '') ? <>
-            <Input ref={cpdiscount} label="discount" type="number" min="1" max="50" className="no-hover" clearable labelRight="%" width="200px" style={{textAlign: "center"}} placeholder="20"></Input>
+            {(order.address === '') ? <>
+            <Input ref={cpdiscount} label="delivery" type="number" min="1" max="50" className="no-hover" clearable labelRight="%" width="200px" style={{textAlign: "center"}} placeholder="20"></Input>
             </>
             :
-            <span>{orders.discount}</span>
+            <span><br/>Name: {order.name} <br/> Address :{order.address}</span>
         }
             </Text>
         </Modal.Content>
         <Modal.Action passive onClick={() => setState(false)}>Cancel</Modal.Action>
-        <Modal.Action>{<Toggle onChange={(e) => toggleHandler(e)}  initialChecked={orders.status}/>}</Modal.Action>
-        {orders.code === '' ? 
-        <Modal.Action passive onClick={postCoupon}>Submit</Modal.Action>
-        :
-        <Modal.Action passive onClick={removeHandler}>Remove</Modal.Action>
-        }
+        <Modal.Action>
+            <div className="toggle-btn">
+            <Text size={'16px'}>Shipped {<RiTakeawayFill/>}</Text>
+            {<Toggle disabled={order.isshipped} onChange={(e) => toggleHandler(e)}  initialChecked={order.isshipped}/>}
+            </div>
+        </Modal.Action>
         </Modal>
         </>
       )
 }
-export default orders;
+export default order;

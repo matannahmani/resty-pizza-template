@@ -1,6 +1,6 @@
 import '../styles/globals.scss'
 import Head from 'next/head';
-import { GeistProvider, CssBaseline, Text, Card } from '@geist-ui/react'
+import { GeistProvider, CssBaseline, Text, Card } from '@geist-ui/react';
 import {FaPizzaSlice} from 'react-icons/fa';
 import Navbar from '../components/navbar';
 import {UserContext,CartContext, ShopContext,} from '../components/contextprovider';

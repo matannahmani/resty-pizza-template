@@ -1,4 +1,4 @@
-import {Input,Button,Spacer, Modal, useToasts,Image, Grid, Card} from '@geist-ui/react';
+import {Button,Spacer, Modal, useToasts,Image, Grid, Card} from '@geist-ui/react';
 import React,{ useEffect, useState } from 'react';
 import { UserContext } from '../components/contextprovider';
 import {MdPhonelinkLock} from 'react-icons/md';
@@ -40,7 +40,11 @@ const Checkout = (props) => {
         if (name.current.value.length > 3 && address.current.value.length > 3 && phone.current.value.length > 3 ){
             if (phone.current.value.match(regex)){
                 setModal(true);
+                const currentuser = {address: address.current.value,name: name.current.value,phone: phone.current.value};
                 setVerify({...verify,loading: true});
+                // if verify then set user state
+                setUser({...currentuser})
+                localStorage.setItem('user', JSON.stringify(currentuser));
             }else{
             setToast({type: 'error', text: 'Please enter vaild phone: EX: 0541234567'});
             phone.current.parentElement.classList.add('error')
@@ -53,10 +57,24 @@ const Checkout = (props) => {
             })
         }
     }
+    useEffect(() => {
+        const saveduser = JSON.parse(localStorage.getItem('user'));
+        if (saveduser !== null && user.name === undefined)
+        {
+            console.log(saveduser);
+            name.current.value = saveduser.name;
+            address.current.value = saveduser.address;
+            phone.current.value  = saveduser.phone;
+        }else if (user.phone !== null){ // incase user cleans active storage while being on site
+            name.current.value = user.name;
+            address.current.value = user.address;
+            phone.current.value  = user.phone;
+        }
+    }, [])
 
     return (
         <>
-        <RiArrowLeftSLine className="returnarrow" style={{position: 'absolute'}} onClick={() => props.paid(false)}/>
+        <RiArrowLeftSLine className="returnarrow" style={{position: 'absolute'}} onClick={() => {props.paid(true);props.setDelivery({stage: false,takeaway: false})}}/>
         <Grid.Container alignItems={"center"} justify={"center"} direction={"column"}>
         <Grid>
         <h3 style={{textAlign: "center",color: "#FAFAFA"}}>Delivery Address</h3>

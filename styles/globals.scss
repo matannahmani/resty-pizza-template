@@ -11,25 +11,22 @@ $spacer-xl: 4vh;
 @import './footer';
 @import './product';
 @import './cart';
+@import './admin';
+
 #__next{
   overflow: hidden;
   background: $black;
 }
 #page-wrap{
   overflow: hidden;
-  min-height: calc(100vh - 130px);
-  padding-top: 80px;
-  padding-bottom: 20px;
+  min-height: calc(100vh - 90px);
+  padding-top: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 .content-center{
-  margin-bottom: 130px;
   width: 100%;
-}
-header{
-  height: 80px;
 }
 
 .jsx-492226652 img{
@@ -123,7 +120,27 @@ input[type=number] {
     filter: drop-shadow( 0 0 20px #fff) drop-shadow( 0 0 25px #e60073) drop-shadow( 0 0 40px #e60073);
   }
 }
-
 .gold-border{
   border: gold 1px solid !important;
+}
+// cart transition animation
+.fade-enter {
+  opacity: 0;
+  transform: translateY(-20%);
+}
+.fade-enter-active {
+  opacity: 1;
+  transform: translateY(0%);
+}
+.fade-exit {
+  opacity: 1;
+  transform: translateY(0%);
+}
+.fade-exit-active {
+  opacity: 0;
+  transform: translateY(20%);
+}
+.fade-enter-active,
+.fade-exit-active {
+  transition: opacity 500ms, transform 500ms;
 }
