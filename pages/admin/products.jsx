@@ -81,6 +81,7 @@ const Products = (props) => {
                     if (!updatepizza)
                     {
                         newcp.id = result.data.id;
+                        delete newcp.data;
                         (data !== undefined ) ? setData([...data,{...newcp,shortdes}]) : setData([{...newcp,shortdes}]);
                         setToast({type: 'success',text: `name : ${newcp.name} added successfully`})
                     }else
@@ -99,19 +100,11 @@ const Products = (props) => {
                 return setState(false);
             }
         }
-        setToast({type: 'error',text: 'Pizza must have 3 letters and price is capped at 50%'})
+        setToast({type: 'error',text: 'Pizza must have 3 letters and price is capped at 250'})
     }
     
     const toggleHandler = (e) => {
         setPizza({...pizza, status:e.target.checked})
-        if (pizza.name !== ''){ // not new pizza
-            const updatedate = [...data];
-            const index = updatedate.findIndex((e) => e.name === pizza.name);
-            updatedate[index].status = e.target.checked;
-            setData([...updatedate])
-            pizza.update();
-            setToast({type: 'success',text: `name : ${pizza.name} was ${(e.target.checked) ? `enabled` : `disabled`}`})
-        }
     }
     const loadImageHandler = async (e) => {
         const previewImage = document.getElementById('preview-img');
@@ -162,7 +155,7 @@ const Products = (props) => {
         <Spacer/>
         <Modal.Subtitle>
             {(pizza.name === '') ? <>
-            <Input ref={pzcode}label="name" className="no-hover" clearable width="200px" style={{textAlign: "center"}} placeholder="Pepperoni"></Input>
+            <Input ref={pzcode}label="name" className="no-hover" clearable width="200px" style={{textAlign: "center"}} disabled={upload} placeholder="Pepperoni"></Input>
             </>
             :
             <Input ref={pzcode}label="name" className="no-hover" clearable width="200px" style={{textAlign: "center"}} disabled={!isupdating || upload} initialValue={pizza.name}></Input>}
@@ -171,14 +164,14 @@ const Products = (props) => {
         <Modal.Content>
             <Text className="align-center">
             {(pizza.price === '') ? <>
-            <Input ref={pzprice} label="price" type="number" min="1" max="200" className="no-hover" clearable labelRight="$" width="200px" style={{textAlign: "center"}} placeholder="9.99"></Input>
+            <Input ref={pzprice} label="price" type="number" min="1" max="200" className="no-hover" clearable labelRight="$" width="200px" disabled={upload} style={{textAlign: "center"}} placeholder="9.99"></Input>
             </>
             :
             <Input ref={pzprice} label="price" type="number" min="1" max="200" className="no-hover" clearable labelRight="$" width="200px" style={{textAlign: "center"}} disabled={!isupdating || upload} initialValue={pizza.price}></Input>
 }
             </Text>
             <div className="align-center">
-            {(pizza.description === '') ? <Textarea ref={pzdesc} width="200px" placeholder="Please enter a description." />
+            {(pizza.description === '') ? <Textarea ref={pzdesc} width="200px" disabled={upload} placeholder="Please enter a description." />
             :
             <Textarea ref={pzdesc} width="200px"  disabled={!isupdating || upload} initialValue={pizza.description} />
             }
