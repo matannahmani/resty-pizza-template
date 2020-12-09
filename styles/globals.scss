@@ -28,6 +28,32 @@ $spacer-xl: 4vh;
 .content-center{
   width: 100%;
 }
+.loading-fix{
+  div {
+    width: 100% !important;
+  }
+}
+
+::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	border-radius: 10px;
+	background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar
+{
+	width: 12px;
+  background-color: #F5F5F5;
+  cursor: pointer;
+}
+
+::-webkit-scrollbar-thumb
+{
+	border-radius: 10px;
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+	background-color: #555;
+}
 
 .jsx-492226652 img{
   cursor: pointer;
@@ -45,6 +71,7 @@ $spacer-xl: 4vh;
 .align-center{
   align-items: center;
   text-align: center;
+  padding: 8px;
 }
 
 .headline > div{

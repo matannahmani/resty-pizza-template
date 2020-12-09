@@ -3,7 +3,7 @@ import {useState} from 'react';
 import {TiTick,TiCancel} from 'react-icons/ti';
 import {RiCoupon2Fill} from 'react-icons/ri';
 import React from 'react';
-import {apipostCoupon,apigetCoupon,apipatchCoupon,apideleteCoupon} from '../../lib/apicontroller';
+import {apipostCoupon,apigetCoupon,apipatchCoupon,apideleteCoupon} from '../../lib/couponapicontroller';
   const Coupon = (props) => {
     const operation = (actions, rowData) => {
         return <Button size="mini" shadow auto onClick={(e) => handler(rowData,actions)}>Show Coupon</Button>
@@ -46,7 +46,7 @@ import {apipostCoupon,apigetCoupon,apipatchCoupon,apideleteCoupon} from '../../l
         const updatedata = [...data];
         updatedata.splice(index,1);
         setData([...updatedata]);
-        apideleteCoupon({id: index});
+        apideleteCoupon({id: data[index].id});
         setState(false);
     }
     const addCouponHandler = () => {
