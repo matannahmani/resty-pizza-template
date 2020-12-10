@@ -1,4 +1,4 @@
-import {Table,Text,Button,Grid,Card,useToasts,Modal,Toggle,Spacer,Input,Image,Loading,Textarea} from '@geist-ui/react';
+import {Table,Text,Button,Grid,Card,useToasts,Modal,Toggle,Spacer,Input,Image,Loading,Textarea,Checkbox} from '@geist-ui/react';
 import {useState} from 'react';
 import {TiTick,TiCancel} from 'react-icons/ti';
 import {FaPizzaSlice} from 'react-icons/fa';
@@ -31,7 +31,7 @@ const Products = (props) => {
     }
     const [state, setState] = useState(false)
     const [, setToast] = useToasts();
-    const [pizza, setPizza] = useState({name: '', price: '', photo: '',status: false,description: '',data: '', enabled: false,operation,shortdes});
+    const [pizza, setPizza] = useState({name: '', price: '', photo: '',size: [],status: false,description: '',data: '', enabled: false,operation,shortdes});
     const pzcode = React.useRef();
     const pzprice = React.useRef();
     const pzdesc = React.useRef();
@@ -58,7 +58,7 @@ const Products = (props) => {
         setState(false);
     }
     const addPizzaHandler = () => {
-        setPizza({name: '', price: '', photo: '',description: '',status: true,data: '', enabled, operation,shortdes})
+        setPizza({name: '', price: '', photo: '',description: '',status: true,size: [],data: '', enabled, operation,shortdes})
         setState(true);
     }
     const postPizza = async (updatepizza) => { // post / patch
@@ -106,6 +106,12 @@ const Products = (props) => {
     const toggleHandler = (e) => {
         setPizza({...pizza, status:e.target.checked})
     }
+
+    const sizeHandler = (e) => {
+        // console.log(pizza);
+        setPizza({...pizza,size: [...e]})
+    }
+
     const loadImageHandler = async (e) => {
         const previewImage = document.getElementById('preview-img');
         previewImage.src = URL.createObjectURL(e.target.files[0]);
@@ -200,6 +206,12 @@ const Products = (props) => {
             [<Image id="preview-img" src={(pizza.photo !== null ) ? pizza.photo : `../pizza1.png`}  width={160} height={160}/>,
             <Spacer/>]
             }
+        <Checkbox.Group className="align-center" size="large" disabled={upload || pizza.name !== '' && !isupdating } onChange={(e) => sizeHandler(e)} value={pizza.size}>
+        <Checkbox value="M">M</Checkbox>
+        <Checkbox value="XL">XL</Checkbox>
+        <Checkbox value="XXL">XXL</Checkbox>
+        <Checkbox value="55CM">55CM</Checkbox>
+        </Checkbox.Group>
         </Modal.Content>
         <Spacer/>
         {upload ? 

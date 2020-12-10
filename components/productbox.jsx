@@ -3,19 +3,21 @@ import Flicking from "@egjs/react-flicking";
 import {RiArrowLeftSLine} from 'react-icons/ri'
 import React,{useEffect,useState} from 'react';
 import {Image} from '@geist-ui/react';
-const Productbox = () => {
-    const [pizzalist,setpizzaList] = useState();
+const Productbox = (props) => {
+    const [pizzalist,setpizzaList] = useState(props.data);
     const [pizzaindex,setIndex] = useState(0);
     const [loading,setLoading] = useState(true);
     const flicking = React.createRef(<Flicking/>);
-    useEffect(() => {
-        // fetch will be here to get pizzas
-        const pizzaone = {key: 0, id: 0, img: 'pizza1', name: 'Pepperoni',price: 9.20,description: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dolores molestias veritatis quidem.',size: 'XL',amount: 1}
-        const pizzatwo = {key: 1,id: 1, img: 'pizza1', name: 'Margartia',price: 9.50,description: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dolores molestias veritatis quidem.',size: 'XL',amount: 1}
-        const pizzathree = {key: 2,id: 2, img: 'pizza1', name: 'Shrimps',price: 9.90,description: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dolores molestias veritatis quidem.',size: 'XL',amount: 1}
-        setpizzaList([pizzaone,pizzatwo,pizzathree])
-        setLoading(false);
-    }, [])
+    // useEffect(() => {
+    //     // fetch will be here to get pizzas
+    //     console.log(props);
+    //     const pizzaone = {key: 0, id: 0, img: 'pizza1', name: 'Pepperoni',price: 9.20,description: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dolores molestias veritatis quidem.',size: 'XL',amount: 1}
+    //     const pizzatwo = {key: 1,id: 1, img: 'pizza1', name: 'Margartia',price: 9.50,description: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dolores molestias veritatis quidem.',size: 'XL',amount: 1}
+    //     const pizzathree = {key: 2,id: 2, img: 'pizza1', name: 'Shrimps',price: 9.90,description: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dolores molestias veritatis quidem.',size: 'XL',amount: 1}
+    //     setpizzaList([pizzaone,pizzatwo,pizzathree])
+    //     setLoading(false);
+    // }, [])
+    
     const moveHandler = (next) => {
         const flick = flicking.current;
         if (next)
@@ -40,7 +42,7 @@ const Productbox = () => {
                 {pizzalist !== 'undefined' ? 
                 pizzalist.map((e) => 
                     {
-                        if (e.img === '')
+                        if (e.photo_url === '')
                             return(
                                 <div key={e.id} className="panel">
                                     <svg width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -51,7 +53,7 @@ const Productbox = () => {
                         else
                         {
                             return(
-                                <Image key={e.id} src={`${e.img}.png`} width={160} height={160}/>
+                                <Image key={e.id} src={e.photo_url} width={160} height={160}/>
                             )
                         }
                 })
