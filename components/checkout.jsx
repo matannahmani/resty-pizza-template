@@ -1,10 +1,12 @@
 import {Button,Spacer, Modal, useToasts,Image, Grid, Card} from '@geist-ui/react';
 import React,{ useEffect, useState } from 'react';
-import { UserContext } from '../components/contextprovider';
+import { UserContext,CartContext } from '../components/contextprovider';
 import {MdPhonelinkLock} from 'react-icons/md';
 import {RiArrowLeftSLine} from 'react-icons/ri'
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
+import {apipostOrder} from '../lib/orderapicontroller';
+
 const useStyles = makeStyles((theme) => ({
     root: {
       '& > *': {
@@ -14,11 +16,13 @@ const useStyles = makeStyles((theme) => ({
       },
     },
   }));
+
 const Checkout = (props) => {
     const classes = useStyles();
     const [verify,setVerify] = useState({loading: false, phone: false});
     const [modal, setModal] = useState(false)
     const [user,setUser] = React.useContext(UserContext);
+    const [cart,] = React.useContext(CartContext);
     const [, setToast] = useToasts()
     const name = React.createRef();
     const address = React.createRef();
@@ -35,14 +39,17 @@ const Checkout = (props) => {
             timer += 1000;
         }, 1000);
     }
-    const verifyHandler = () => {
+    const verifyHandler = async () => {
         const regex = /^\+?(972\-?)?0?(([23489]{1}\-?\d{7})|[5]{1}\d{1}\-?\d{7})$/
         if (name.current.value.length > 3 && address.current.value.length > 3 && phone.current.value.length > 3 ){
             if (phone.current.value.match(regex)){
-                setModal(true);
+                // setModal(true);
                 const currentuser = {address: address.current.value,name: name.current.value,phone: phone.current.value};
-                setVerify({...verify,loading: true});
+                const currentcart = cart.cart.map( (e) => ({id: e.id,size: e.choosensize,amount: e.amount}) )
+                // setVerify({...verify,loading: true});
                 // if verify then set user state
+                const result = await apipostOrder({...currentuser,order_products: [...currentcart],coupon: props.discount.code,takeaway: props.delivery});
+
                 setUser({...currentuser})
                 localStorage.setItem('user', JSON.stringify(currentuser));
             }else{
@@ -61,11 +68,10 @@ const Checkout = (props) => {
         const saveduser = JSON.parse(localStorage.getItem('user'));
         if (saveduser !== null && user.name === undefined)
         {
-            console.log(saveduser);
             name.current.value = saveduser.name;
             address.current.value = saveduser.address;
             phone.current.value  = saveduser.phone;
-        }else if (user.phone !== null){ // incase user cleans active storage while being on site
+        }else if (user.phone !== null && user.phone !== undefined){ // incase user cleans active storage while being on site
             name.current.value = user.name;
             address.current.value = user.address;
             phone.current.value  = user.phone;

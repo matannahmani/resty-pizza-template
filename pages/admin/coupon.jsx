@@ -57,13 +57,12 @@ import {apipostCoupon,apigetCoupon,apipatchCoupon,apideleteCoupon} from '../../l
         if (cpcode.current.value.length > 2 && cpdiscount.current.value.length > 1)
         {
             if (cpdiscount.current.value > 0 && cpdiscount.current.value < 51){
-                setToast({type: 'success',text: `CODE : ${cpcode.current.value} added successfully`})
                 const newcp = {...coupon,code: cpcode.current.value, discount: cpdiscount.current.value};
                 const result = await apipostCoupon((({ operation, enabled, ...o }) => o)(newcp) );
                 if (result.code === 200){
                     newcp.id = result.data.id;
-                    (data !== undefined ) ? setData([...data,newcp]) : setData([newcp]);
-
+                    (data !== undefined ) ? setData([...data,{...newcp,discount: `${newcp.discount}%`}]) : setData([{...newcp,discount: `${newcp.discount}%`}]);
+                    setToast({type: 'success',text: `CODE : ${cpcode.current.value} added successfully`})
                 }
                 return setState(false);
             }

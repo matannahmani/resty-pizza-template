@@ -5,6 +5,7 @@ import { CartContext } from '../components/contextprovider';
 import {MdPayment} from 'react-icons/md';
 import {RiCoupon2Fill} from 'react-icons/ri'
 import TextField from '@material-ui/core/TextField';
+import {apicheckCoupon} from '../lib/couponapicontroller';
 
 const Carttable = (props) => {
     const [loading,setLoading] = useState(false);
@@ -14,35 +15,32 @@ const Carttable = (props) => {
     const [state, setState] = useState(false);
     const coupon = React.createRef();
     const handler = () => setState(true);
-    const [discount,setDiscount] = useState(1);
-    const couponsarray = [{code: '10OFF',discount: 0.9},{code: '20OFF',discount: 0.80}];
 
     const closeHandler = (event) => {
       setState(false);
       setLoading(false);
     }
 
-    const couponHandler = () => {
+    const couponHandler = async () => {
         setLoading(true)
         const code = coupon.current.value;
-        setTimeout( () => {
-            setLoading(false);
-            if( couponsarray.some (e => e.code === code)){
-                const endresult = couponsarray.find(e => e.code === code);
-                setToast({text: `${(100 - endresult.discount * 100).toFixed(0)}% off applied`,type: "success"})
-                setDiscount(endresult.discount);
-                setState(false);
-            }else{
-                setToast({text: `Invaild Coupon`,type: "warning"})
-            }
-        }, 500);
+        const result = await apicheckCoupon({code: code});
+        setLoading(false);
+        if (result.code === 200){
+            setToast({text: `${(result.data.discount)}% discount applied`,type: "success"})
+            props.setDiscount({discount: result.data.discount,code: code});
+        }else{
+            setToast({text: `Invaild Coupon`,type: "warning"})
+        }
+        setState(false);
     }
     const ordertotal = (discounton) =>{
         let count = 0;
         cart.cart.forEach((e) => {
-            count += e.amount * e.price;
+            const index = e.size.findIndex(item => item === e.choosensize)
+            count += e.amount * (e.price + index * e.jprice);
         })
-        return discounton ? (count * discount).toFixed(2) : count.toFixed(2)
+        return discounton ? (count * ((100 - props.discount.discount) / 100)).toFixed(2) : count.toFixed(2)
     }
     const operation = (actions, rowData) => {
         return (
@@ -73,11 +71,11 @@ const Carttable = (props) => {
     }
 
     useEffect(() => {
-        console.log(cart);
         const mydata = []
         if (cart.cart.length > 0)
             cart.cart.forEach((e) => {
-                mydata.push({id: e.id, size: e.size,product: `${e.name} - ${e.size}`,amount: e.amount,price: e.price, operation});
+                const index = e.size.findIndex(item => item === e.choosensize)
+                mydata.push({id: e.id, size: e.size,product: `${e.name} - ${e.choosensize}`,amount: e.amount,price: (e.price + e.jprice * index), operation});
             });
         else
             setData({product: `none`, amount: `none`, operation})
@@ -88,7 +86,7 @@ const Carttable = (props) => {
         <>
         <div className="cart-total">
         <h3 style={{textAlign: "center",color: "#FAFAFA"}}>Order Total : {ordertotal(true)} $</h3>
-    {discount !== 1 ?  <span>Original Price: {ordertotal(false)}$</span> : null}
+    {props.discount.discount !== 0 ?  <span>Original Price: {ordertotal(false)}$</span> : null}
         </div>
         <Table data={data} hover={false}>
         <Table.Column prop="product" label="product" />
@@ -107,7 +105,7 @@ const Carttable = (props) => {
             <Grid justify="space-between">
                 <Button onClick={handler} ghost auto size="medium" shadow icon={<RiCoupon2Fill/>}>Coupon</Button>
                 <Spacer inline={true}/>
-                <Button onClick={() => {setToast({text: 'SOON', type: "success"});props.paid(true);}} ghost auto size="medium" shadow icon={<MdPayment/>}>Check Out</Button>
+                <Button onClick={() => props.paid(true)} ghost auto size="medium" shadow icon={<MdPayment/>}>Check Out</Button>
             </Grid>
         </Grid.Container>
         </>
@@ -115,7 +113,7 @@ const Carttable = (props) => {
         <Modal open={state} onClose={closeHandler}>
         <Modal.Title>Enter Your Coupon</Modal.Title>
         <Modal.Content style={{textAlign: "center"}}>
-        <TextField inputRef={coupon} id="form-code" className="label-shrink black" label="Code" />
+        <TextField disabled={loading} inputRef={coupon} id="form-code" className="label-shrink black" label="Code" />
         </Modal.Content>
         <Modal.Action passive onClick={() => setState(false)}>Cancel</Modal.Action>
         <Modal.Action loading={loading} onClick={couponHandler}>Submit</Modal.Action>

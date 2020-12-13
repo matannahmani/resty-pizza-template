@@ -21,7 +21,8 @@ const Products = (props) => {
         {
             let datalist = []
             props.data.forEach (item => {
-                datalist.push({...item,photo: item.photo_url,operation,enabled,shortdes})
+                console.log(item);
+                datalist.push({...item,photo: item.photo_url,key: item.id,operation,enabled,shortdes})
             });
             return datalist;
         }
@@ -31,14 +32,16 @@ const Products = (props) => {
     }
     const [state, setState] = useState(false)
     const [, setToast] = useToasts();
-    const [pizza, setPizza] = useState({name: '', price: '', photo: '',size: [],status: false,description: '',data: '', enabled: false,operation,shortdes});
+    const [pizza, setPizza] = useState({name: '', price: '',jprice: '', photo: '',size: [],status: true,description: '',operation,enabled,shortdes});
     const pzcode = React.useRef();
     const pzprice = React.useRef();
+    const pzjprice = React.useRef();
     const pzdesc = React.useRef();
     const pzphoto = React.useRef();
     const [data,setData] = useState(dataHandler);
     const [upload,setLoading] = useState(false);
     const [isupdating,setUpdate] = useState(false);
+    const [dataimage,setImage] = useState(undefined);
 
     const handler = (e,actions) => {
         setPizza({...e.rowValue,remove: actions.remove,update: actions.update});
@@ -49,6 +52,7 @@ const Products = (props) => {
         setUpdate(false);
     }
     const removeHandler = () => {
+        if (confirm(`are you sure you want to delete ${pizza.name}`)){
         setToast({type: 'warning',text: `${pizza.name} Pizza was removed`})
         const index = data.findIndex(e => e.name === pizza.name)
         const updatedata = [...data];
@@ -56,9 +60,10 @@ const Products = (props) => {
         setData([...updatedata]);
         apideleteProduct({id: data[index].id});
         setState(false);
+        }
     }
     const addPizzaHandler = () => {
-        setPizza({name: '', price: '', photo: '',description: '',status: true,size: [],data: '', enabled, operation,shortdes})
+        setPizza({name: '', price: '',jprice: '', photo: '',size: ["M","XL","XXL","55CM"],status: true,description: '',enabled,operation,shortdes})
         setState(true);
     }
     const postPizza = async (updatepizza) => { // post / patch
@@ -66,23 +71,23 @@ const Products = (props) => {
         {
             if (pzprice.current.value > 0 && pzprice.current.value < 201){
                 const previewImage = document.getElementById('preview-img');
-                const newcp = {...pizza,description: pzdesc.current.value, name: pzcode.current.value,photo: previewImage.src, price: pzprice.current.value};
+                const newcp = {...pizza,description: pzdesc.current.value, name: pzcode.current.value,photo: previewImage.src, price: pzprice.current.value, jprice: pzjprice.current.value};
                 setLoading(true);
                 let result;
                 if (updatepizza)
                 {
-                    result = await apipatchProduct((({ operation, enabled,shortdes,photo_url,photo, ...o }) => o)(newcp) );
+                    result = await apipatchProduct((({ operation, enabled,shortdes,key,photo_url,photo, ...o }) => o)({...newcp,photodata: dataimage}) );
                 }
                 else
                 {
-                    result = await apipostProduct((({ operation, enabled,shortdes,photo, ...o }) => o)(newcp) );
+                    result = await apipostProduct((({ operation, enabled,shortdes,key,photo, ...o }) => o)({...newcp,photodata: dataimage}) );
                 }
                 if (result.code === 200){
                     if (!updatepizza)
                     {
                         newcp.id = result.data.id;
                         delete newcp.data;
-                        (data !== undefined ) ? setData([...data,{...newcp,shortdes}]) : setData([{...newcp,shortdes}]);
+                        (data !== undefined ) ? setData([...data,{...newcp,photodata: null,shortdes}]) : setData([{...newcp,photodata: null,shortdes}]);
                         setToast({type: 'success',text: `name : ${newcp.name} added successfully`})
                     }else
                     {
@@ -96,6 +101,7 @@ const Products = (props) => {
                 else{
                     setToast({type: 'warning',text: `Something went wrong try again later`})
                 }
+                setImage(undefined);
                 setLoading(false);
                 return setState(false);
             }
@@ -108,8 +114,7 @@ const Products = (props) => {
     }
 
     const sizeHandler = (e) => {
-        // console.log(pizza);
-        setPizza({...pizza,size: [...e]})
+        setPizza({...pizza,size: e})
     }
 
     const loadImageHandler = async (e) => {
@@ -123,8 +128,10 @@ const Products = (props) => {
             updatedata[index].data = result; // base64 of image
             setData([...updatedata]);
         }
-        setPizza({...pizza,data: result});
+        setImage(result);
+        await setPizza({...pizza,photodata: result});
     }
+
     const toDataURL = url => fetch(url)
     .then(response => response.blob())
     .then(blob => new Promise((resolve, reject) => {
@@ -169,12 +176,14 @@ const Products = (props) => {
         <Spacer/>
         <Modal.Content>
             <Text className="align-center">
-            {(pizza.price === '') ? <>
-            <Input ref={pzprice} label="price" type="number" min="1" max="200" className="no-hover" clearable labelRight="$" width="200px" disabled={upload} style={{textAlign: "center"}} placeholder="9.99"></Input>
-            </>
+            {(pizza.price === '') ?
+            [<Input ref={pzprice} label="Price" type="number" min="1" max="200" className="no-hover" clearable labelRight="$" width="200px" disabled={upload} style={{textAlign: "center"}} placeholder="9.99"></Input>,
+            <Spacer/>,
+            <Input ref={pzjprice} label="UP-Price" type="number" min="1" max="30" className="no-hover" clearable labelRight="$" width="200px" disabled={upload} style={{textAlign: "center"}} placeholder="20"></Input>]
             :
-            <Input ref={pzprice} label="price" type="number" min="1" max="200" className="no-hover" clearable labelRight="$" width="200px" style={{textAlign: "center"}} disabled={!isupdating || upload} initialValue={pizza.price}></Input>
-}
+            [<Input ref={pzprice} label="Price" type="number" min="1" max="200" className="no-hover" clearable labelRight="$" width="200px" style={{textAlign: "center"}} disabled={!isupdating || upload} initialValue={pizza.price}></Input>,
+            <Spacer/>,
+            <Input ref={pzjprice} label="UP-Price" type="number" min="1" max="30" className="no-hover" clearable labelRight="$" width="200px" style={{textAlign: "center"}} disabled={!isupdating || upload} initialValue={pizza.jprice}></Input>]}
             </Text>
             <div className="align-center">
             {(pizza.description === '') ? <Textarea ref={pzdesc} width="200px" disabled={upload} placeholder="Please enter a description." />
@@ -206,13 +215,13 @@ const Products = (props) => {
             [<Image id="preview-img" src={(pizza.photo !== null ) ? pizza.photo : `../pizza1.png`}  width={160} height={160}/>,
             <Spacer/>]
             }
-        <Checkbox.Group className="align-center" size="large" disabled={upload || pizza.name !== '' && !isupdating } onChange={(e) => sizeHandler(e)} value={pizza.size}>
+        </Modal.Content>
+        <Checkbox.Group className="align-center" size="large" disabled={upload || pizza.name !== '' && !isupdating } onChange={sizeHandler} value={pizza.size}>
         <Checkbox value="M">M</Checkbox>
         <Checkbox value="XL">XL</Checkbox>
         <Checkbox value="XXL">XXL</Checkbox>
         <Checkbox value="55CM">55CM</Checkbox>
         </Checkbox.Group>
-        </Modal.Content>
         <Spacer/>
         {upload ? 
         <Modal.Action className="loading-fix">

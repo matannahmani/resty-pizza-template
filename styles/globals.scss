@@ -33,6 +33,9 @@ $spacer-xl: 4vh;
     width: 100% !important;
   }
 }
+.content.jsx-891583295{ // remove title padding from modal
+  padding: 0 !important;
+}
 .group.jsx-1487474754 label{
   margin: 16px !important;
 }

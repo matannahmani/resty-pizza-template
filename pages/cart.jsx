@@ -10,6 +10,7 @@ const Cart = () => {
     const [data,setData] = useState(undefined);
     const [paid,setPay] = useState(false);
     const [delivery,setDelivery] = useState({stage: false,takeaway: false});
+    const [discount,setDiscount] = useState({discount: 0,code: ''});
     return (
         <SwitchTransition>
         <CSSTransition
@@ -19,11 +20,11 @@ const Cart = () => {
         <Grid.Container className="cartcard" alignItems="center" justify="center">
             <Grid xs={24} sm={18} md={12}>
             <Card style={{position: 'relative'}} type="violet" shadow>
-            {!paid ? <Carttable paid={setPay}/>
+            {!paid ? <Carttable discount={discount} setDiscount={setDiscount} paid={setPay}/>
                 : 
                 !delivery.stage ? <Deliverymethod paid={setPay} setDelivery={setDelivery}/>
                 :
-                <Checkout paid={setPay} setDelivery={setDelivery}/>
+                <Checkout discount={discount} paid={setPay} delivery={delivery.takeaway} setDelivery={setDelivery}/>
                 }
             </Card>
             </Grid>
