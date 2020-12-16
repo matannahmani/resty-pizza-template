@@ -16,7 +16,7 @@ export const getStaticProps = async () => {
   await data.data.data.forEach(i => unseralized.push(i.attributes)); // please fix in the future it hurts my eyes jesus fast api what a mess
   return {
     props: {data: unseralized,code: data.code},
-    revalidate: 0.5, // In seconds
+    revalidate: 1, // In seconds
 
   }
 }
