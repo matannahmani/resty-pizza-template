@@ -9,7 +9,7 @@ export default function Home(props) {
     </>
   )
 }
-export const getStaticProps = async () => {
+export const getServerSideProps = async () => {
   // Get external data from the file system, API, DB, etc.
   const data = await apigetProduct();
   const unseralized = [];
