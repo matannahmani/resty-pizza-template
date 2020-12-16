@@ -140,7 +140,6 @@ import {apipostCoupon,apigetCoupon,apipatchCoupon,apideleteCoupon} from '../../l
 export default Coupon;
 export const getStaticProps = async () => {
     // Get external data from the file system, API, DB, etc.
-    console.log(`${process.env.API_URL}`)
     const data = await apigetCoupon();
     const unseralized = [];
     await data.data.data.forEach(i => unseralized.push(i.attributes)); // please fix in the future it hurts my eyes jesus fast api what a mess
