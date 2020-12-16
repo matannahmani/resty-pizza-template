@@ -70,6 +70,7 @@ import {apipostCoupon,apigetCoupon,apipatchCoupon,apideleteCoupon} from '../../l
         setToast({type: 'error',text: 'Coupon must have 3 letters and discount is capped at 50%'})
     }
     const toggleHandler = (e) => {
+        console.log(process.env.API_APP_URL)
         setCoupon({...coupon, status:e.target.checked})
         if (coupon.code !== ''){
             const updatedate = [...data];
