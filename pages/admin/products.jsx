@@ -174,7 +174,7 @@ const Products = (props) => {
             <Input ref={pzcode}label="name" className="no-hover" clearable width="200px" style={{textAlign: "center"}} disabled={!isupdating || upload} initialValue={pizza.name}></Input>}
         </Modal.Subtitle>
         <Spacer/>
-        <Modal.Content>
+        <Modal.Content className="p-0">
             <Text className="align-center">
             {(pizza.price === '') ?
             [<Input ref={pzprice} label="Price" type="number" min="1" max="200" className="no-hover" clearable labelRight="$" width="200px" disabled={upload} style={{textAlign: "center"}} placeholder="9.99"></Input>,

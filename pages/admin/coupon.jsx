@@ -114,6 +114,7 @@ import {apipostCoupon,apigetCoupon,apipatchCoupon,apideleteCoupon} from '../../l
             :
             <span>{coupon.code}</span>
         }
+        <Spacer/>
         </Modal.Subtitle>
         <Modal.Content>
         <Text className="align-center">
