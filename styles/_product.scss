@@ -125,7 +125,7 @@
       padding: 4vh;
     }
   }
-  @media only screen and (max-width: 361px) {
+  @media only screen and (max-width: 385px) {
     .slider-indicators{
       svg{
         margin: 0 8px;
@@ -148,5 +148,27 @@
     }
     .addcart {
       padding: 8px;
+    }
+  }
+  @media only screen and (max-height: 599px) {
+    .pizza-box .price{
+      font-size: 16px;
+    }
+    .pizza-box > .name{
+      margin: 8px;
+      font-size: 20px;
+    }
+    .addcart > .cartoption{
+      width: 135px;
+      height: 32px;
+      font-size: 16px;
+    }
+    .addcart .cartoption button{
+      width: 30px;
+      height: 30px;
+    }
+    .pizza-size .option{
+      font-size: 16px;
+      width: 64px;
     }
   }
