@@ -72,7 +72,7 @@ function MyApp({ Component, pageProps }) {
 
   useEffect( async() => { // auto login and checks user changes
     const saveduser = JSON.parse(localStorage.getItem('user'));
-    if (saveduser.adminlevel !== undefined && saveduser.adminlevel > 0 || user.adminlevel > 1){
+    if (saveduser !== null && saveduser.adminlevel > 0 || user.adminlevel > 1){
       const result = await isLogged();
       if (result.data.status.code === 200){
         if (!_.isEqual(user,{...user,...result.data.data}))
