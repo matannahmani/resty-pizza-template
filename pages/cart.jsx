@@ -26,7 +26,7 @@ const Cart = () => {
                 unseralized = data.data.map(i => ({...i,key: `${i.id}${i.choosensize}`,amount: parseInt(i.amount)}) )
             }
             if (unseralized !== undefined){
-                if (isArrayEqual(unseralized,cart.cart)){
+                if (!isArrayEqual(unseralized,cart.cart)){
                     setCart({cart: unseralized,oldcart: {}});
                 }
             }
