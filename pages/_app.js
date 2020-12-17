@@ -45,6 +45,7 @@ function MyApp({ Component, pageProps }) {
 
   const [user, setUser] = useState(
     {
+      adminlevel: 0,
       user: {
         name: null,
         address: null,
@@ -85,9 +86,11 @@ function MyApp({ Component, pageProps }) {
   }, [[],user]);
 
   useEffect( () => {
-    if (Router.pathname.includes('/admin/') && user.adminlevel !== null && user.adminlevel < 1){
-      setToast({type: "warning",text: "This path isnt allowed"});
-      Router.replace('/');
+    if (Router.pathname.includes('/admin/') && user.adminlevel !== null){
+      if ( user.adminlevel < 1 ){
+        setToast({type: "warning",text: "This path isnt allowed"});
+        Router.replace('/');
+      }
     }
   },[[],path]);
 
