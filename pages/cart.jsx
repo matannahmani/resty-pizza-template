@@ -15,7 +15,7 @@ const Cart = () => {
     const [discount,setDiscount] = useState({discount: 0,code: ''});
     const isArrayEqual = (x, y) => { // for cart checking => (local cart == server cart)
         return _(x).differenceWith(y, _.isEqual).isEmpty();
-      };
+    };
     useEffect( async () => { // to check if someone edited cart and confirm prices.
         if (cart.cart.length > 0){
             setShop({...shop,loading: true});

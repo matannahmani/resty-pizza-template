@@ -17,7 +17,7 @@ const Navbar = () => {
             {/* <h1>Pepperoni Pizza</h1> */}
             <div className="cartnav" style={{cursor: 'pointer'}} onClick={() => Router.push('/cart')}>
                 <RiShoppingCartLine className="cartbox"/>
-                <span style={{color: "white"}}>{cart.cart.length}</span>
+                <span style={{color: "white",pointerEvents: 'none'}}>{cart.cart.length}</span>
             </div>
         </header>
       );
