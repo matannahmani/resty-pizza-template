@@ -3,11 +3,12 @@ import Head from 'next/head';
 import { GeistProvider, CssBaseline, Text, Card } from '@geist-ui/react';
 import {FaPizzaSlice} from 'react-icons/fa';
 import Navbar from '../components/navbar';
-import {UserContext,CartContext, ShopContext,} from '../components/contextprovider';
+import {UserContext,CartContext, ShopContext} from '../components/contextprovider';
 import React, {useEffect,useState, useRef} from 'react';
 import Router from 'next/router';
 import Close from '../components/close';
 import Footer from '../components/footer';
+import Pizzaspinner from '../components/pizzaspinner';
 
 const Loadingscreen = () => {
   return (
@@ -22,7 +23,7 @@ const Loadingscreen = () => {
 function MyApp({ Component, pageProps }) {
   const didMountRef = useRef(false);
   const [load, setLoad] = useState(false);
-  const [shop,setShop] = useState({open: true,delivery: true})
+  const [shop,setShop] = useState({open: true,delivery: true,loading: false})
   const [path,sethPath] = useState('');
   Router.events.on('routeChangeStart', () => setLoad(true));
   Router.events.on('routeChangeComplete', () =>  setLoad(false));
@@ -76,6 +77,9 @@ function MyApp({ Component, pageProps }) {
     <UserContext.Provider value={[user,setUser]}>
     <GeistProvider theme={myTheme}>
       <CssBaseline />
+      <div className={shop.loading ? 'showf spinner-div' : "spinner-div"}>
+        {shop.loading ? <Pizzaspinner/> : null }
+      </div>
       <Navbar/>
       <main id="page-wrap">
         <div className="content-center">

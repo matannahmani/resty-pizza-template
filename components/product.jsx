@@ -38,7 +38,7 @@ export default (props) =>{
   }
   const sizeHandler = (e) => {
     const index = pizza.size.findIndex(item => item === e)
-    setPizza({...pizza, choosensize: e,price: (props.pizza.price + (pizza.jprice * index))});
+    setPizza({...pizza, key: `${e.id}${e.choosensize}`, choosensize: e,price: (props.pizza.price + (pizza.jprice * index))});
   }
   return (
     <>

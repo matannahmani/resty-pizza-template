@@ -25,6 +25,25 @@ $spacer-xl: 4vh;
   align-items: center;
   justify-content: center;
 }
+.spinner-div{
+  display: none;
+  height: 100vh;
+  width: 100vw;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.3);
+  position: fixed;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  color: white;
+  font-size: 40px;
+  cursor: not-allowed;
+}
+
+.showf{
+  display: flex;
+}
+
 .content-center{
   width: 100%;
 }
