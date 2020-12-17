@@ -49,8 +49,7 @@ const Checkout = (props) => {
                 // setVerify({...verify,loading: true});
                 // if verify then set user state
                 const result = await apipostOrder({...currentuser,order_products: [...currentcart],coupon: props.discount.code,takeaway: props.delivery});
-
-                setUser({...currentuser})
+                setUser({...user,...currentuser})
                 localStorage.setItem('user', JSON.stringify(currentuser));
             }else{
             setToast({type: 'error', text: 'Please enter vaild phone: EX: 0541234567'});
@@ -88,15 +87,15 @@ const Checkout = (props) => {
         <Spacer/>
         <form id="order-form" className={classes.root} noValidate autoComplete="off">
         <Grid>
-            <TextField inputRef={name} id="form-name" className="label-shrink cart-text-white" label="Full Name" />
+            <TextField inputRef={name} id="form-name" autoComplete="on" name="name" className="label-shrink cart-text-white" label="Full Name" />
         </Grid>
         <Spacer/>
         <Grid>
-        <TextField inputRef={address}id="form-address" className="label-shrink cart-text-white" label="Address" />
+        <TextField inputRef={address}id="form-address" autoComplete="on" name="address" className="label-shrink cart-text-white" label="Address" />
         </Grid>
         <Spacer/>
         <Grid>
-        <TextField inputRef={phone} id="form-phone" className="label-shrink cart-text-white" label="Phone" />
+        <TextField inputRef={phone} id="form-phone" autoComplete="tel" name="phone" type="tel" className="label-shrink cart-text-white" label="Phone" />
         </Grid>
         <Spacer/>
         </form>

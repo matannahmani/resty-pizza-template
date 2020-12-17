@@ -3,6 +3,7 @@ import Link from 'next/link';
 import React,{useEffect,useState} from 'react';
 import { ShopContext } from '../../components/contextprovider';
 import { useRouter } from 'next/router'
+import { logout } from '../../lib/userapicontroller';
 
 const Dashboard = () => {
     const [shop,setShop] = React.useContext(ShopContext);
@@ -48,6 +49,9 @@ const Dashboard = () => {
             </Grid>
             <Grid>
                 <Button shadow onClick={() => router.push('/')}><Text b>Shop</Text></Button>
+            </Grid>
+            <Grid>
+                <Button shadow type="error" onClick={() => {router.push('/');logout();}}><Text b>Logout</Text></Button>
             </Grid>
         </Grid.Container>
     )

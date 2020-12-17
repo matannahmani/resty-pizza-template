@@ -4,6 +4,7 @@ import {TiTick,TiCancel} from 'react-icons/ti';
 import {FaPizzaSlice} from 'react-icons/fa';
 import React from 'react';
 import {apipostProduct,apigetProduct,apipatchProduct,apideleteProduct} from '../../lib/pizzaapicontroller';
+import { isLogged } from '../../lib/userapicontroller';
 
 const Products = (props) => {
     const operation = (actions, rowData) => {
@@ -248,7 +249,7 @@ const Products = (props) => {
 }
 
 export default Products;
-export const getStaticProps = async () => {
+export const getStaticProps = async (context) => {
     // Get external data from the file system, API, DB, etc.
     const data = await apigetProduct();
     const unseralized = [];

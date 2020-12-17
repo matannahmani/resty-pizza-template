@@ -101,7 +101,7 @@ const Carttable = (props) => {
         : 
         <>
         <Spacer/>
-        <Grid.Container justify="flex-end" alignItems="center">
+        <Grid.Container justify="space-evenly" alignItems="center">
             <Grid justify="space-between">
                 <Button onClick={handler} ghost auto size="medium" shadow icon={<RiCoupon2Fill/>}>Coupon</Button>
                 <Spacer inline={true}/>

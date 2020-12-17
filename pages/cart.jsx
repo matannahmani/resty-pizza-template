@@ -6,7 +6,6 @@ import Carttable from '../components/carttable';
 import Checkout from '../components/checkout';
 import { CSSTransition,SwitchTransition } from 'react-transition-group';
 import {apicheckCart} from '../lib/orderapicontroller';
-var _ = require('lodash');
 
 const Cart = () => {
     const [cart,setCart] = React.useContext(CartContext);
@@ -47,13 +46,15 @@ const Cart = () => {
           classNames='fade'>
         <Grid.Container className="cartcard" alignItems="center" justify="center">
             <Grid xs={24} sm={18} md={12}>
-            <Card style={{position: 'relative'}} type="violet" shadow>
-            {!paid ? <Carttable discount={discount} setDiscount={setDiscount} paid={setPay}/>
-                : 
-                !delivery.stage ? <Deliverymethod paid={setPay} setDelivery={setDelivery}/>
-                :
-                <Checkout discount={discount} paid={setPay} delivery={delivery.takeaway} setDelivery={setDelivery}/>
+            <Card style={{position: 'relative',marginBottom: '16px'}} type="violet" shadow>
+            <Card.Body style={{padding: '16pt 0pt'}}>
+                {!paid ? <Carttable discount={discount} setDiscount={setDiscount} paid={setPay}/>
+                    : 
+                    !delivery.stage ? <Deliverymethod paid={setPay} setDelivery={setDelivery}/>
+                    :
+                    <Checkout discount={discount} paid={setPay} delivery={delivery.takeaway} setDelivery={setDelivery}/>
                 }
+            </Card.Body>
             </Card>
             </Grid>
         </Grid.Container>
