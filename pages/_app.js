@@ -49,7 +49,7 @@ function MyApp({ Component, pageProps }) {
         name: null,
         address: null,
         phone: null,
-        adminlevel: null
+        adminlevel: 0
       }
     });
 
@@ -85,7 +85,7 @@ function MyApp({ Component, pageProps }) {
   }, [[],user]);
 
   useEffect( () => {
-    if (Router.pathname.includes('/admin/') && user.adminlevel < 1){
+    if (Router.pathname.includes('/admin/') && user.adminlevel !== null && user.adminlevel < 1){
       setToast({type: "warning",text: "This path isnt allowed"});
       Router.replace('/');
     }
