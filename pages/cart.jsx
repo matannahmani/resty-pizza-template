@@ -6,6 +6,7 @@ import Carttable from '../components/carttable';
 import Checkout from '../components/checkout';
 import { CSSTransition,SwitchTransition } from 'react-transition-group';
 import {apicheckCart} from '../lib/orderapicontroller';
+var _ = require('lodash');
 
 const Cart = () => {
     const [cart,setCart] = React.useContext(CartContext);
@@ -13,23 +14,31 @@ const Cart = () => {
     const [paid,setPay] = useState(false);
     const [delivery,setDelivery] = useState({stage: false,takeaway: false});
     const [discount,setDiscount] = useState({discount: 0,code: ''});
+    const isArrayEqual = (x, y) => { // for cart checking => (local cart == server cart)
+        return _(x).differenceWith(y, _.isEqual).isEmpty();
+      };
     useEffect( async () => { // to check if someone edited cart and confirm prices.
         if (cart.cart.length > 0){
             setShop({...shop,loading: true});
-            console.log(cart);
             let unseralized;
             const data = await apicheckCart(cart.cart.map(e => `${e.name}=>${e.choosensize}=>${e.amount}`));
             if (data.code === 200 && data.data !== null ){
                 unseralized = data.data.map(i => ({...i,key: `${i.id}${i.choosensize}`,amount: parseInt(i.amount)}) )
             }
             if (unseralized !== undefined){
-                console.log(unseralized);
-                if (Object.entries(unseralized).sort().toString() !== Object.entries(cart.cart).sort().toString())
+                if (isArrayEqual(unseralized,cart.cart)){
                     setCart({cart: unseralized,oldcart: {}});
+                }
             }
             setShop({...shop,loading: false});
         }
     }, [cart])
+
+    const objectsEqual = (o1, o2) => 
+    typeof o1 === 'object' && Object.keys(o1).length > 0 
+        ? Object.keys(o1).length === Object.keys(o2).length 
+            && Object.keys(o1).every(p => objectsEqual(o1[p], o2[p]))
+        : o1 === o2;
     return (
         <SwitchTransition>
         <CSSTransition
