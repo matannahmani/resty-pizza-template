@@ -2,9 +2,9 @@ import {Table,Text,Button,Grid,Card,useToasts,Modal,Toggle,Spacer,Input,Image,Lo
 import {useState} from 'react';
 import {TiTick,TiCancel} from 'react-icons/ti';
 import {FaPizzaSlice} from 'react-icons/fa';
-import React from 'react';
+import React,{useEffect} from 'react';
 import {apipostProduct,apigetProduct,apipatchProduct,apideleteProduct} from '../../lib/pizzaapicontroller';
-import { isLogged } from '../../lib/userapicontroller';
+import { ShopContext } from '../../components/contextprovider';
 
 const Products = (props) => {
     const operation = (actions, rowData) => {
@@ -16,21 +16,22 @@ const Products = (props) => {
     const shortdes = (actions, rowData) => {
         return (<Text small>{rowData.rowValue.description !== null ? rowData.rowValue.description.substring(0,50): 'no description'}</Text>)
     }
-    const dataHandler = () =>{
-        // to do add checking if array
-        if (props.code === 200)
-        {
-            let datalist = []
-            props.data.forEach (item => {
-                console.log(item);
-                datalist.push({...item,photo: item.photo_url,key: item.id,operation,enabled,shortdes})
-            });
-            return datalist;
-        }
-        else{
-            return []
-        }
+    useEffect(async () =>{
+        setShop({...shop,loading: true})
+        const data = await apigetProduct();
+        const unseralized = [];
+        if (data != null){
+        await data.data.data.forEach(i => unseralized.push(i.attributes)); // please fix in the future it hurts my eyes jesus fast api what a mess
+        let datalist = []
+        unseralized.forEach (item => {
+            datalist.push({...item,photo: item.photo_url,key: item.id,operation,enabled,shortdes})
+        });
+        setShop({...shop,loading: false})
+        setData(datalist);
     }
+    },[]);
+
+    const [shop,setShop] = React.useContext(ShopContext);
     const [state, setState] = useState(false)
     const [, setToast] = useToasts();
     const [pizza, setPizza] = useState({name: '', price: '',jprice: '', photo: '',size: [],status: true,description: '',operation,enabled,shortdes});
@@ -39,7 +40,7 @@ const Products = (props) => {
     const pzjprice = React.useRef();
     const pzdesc = React.useRef();
     const pzphoto = React.useRef();
-    const [data,setData] = useState(dataHandler);
+    const [data,setData] = useState([]);
     const [upload,setLoading] = useState(false);
     const [isupdating,setUpdate] = useState(false);
     const [dataimage,setImage] = useState(undefined);
@@ -249,14 +250,3 @@ const Products = (props) => {
 }
 
 export default Products;
-export const getStaticProps = async (context) => {
-    // Get external data from the file system, API, DB, etc.
-    const data = await apigetProduct();
-    const unseralized = [];
-    await data.data.data.forEach(i => unseralized.push(i.attributes)); // please fix in the future it hurts my eyes jesus fast api what a mess
-    return {
-      props: {data: unseralized,code: data.code},
-      revalidate: 1, // In seconds
-    }
-    
-  }

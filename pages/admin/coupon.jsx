@@ -1,37 +1,39 @@
 import {Table,Text,Button,Grid,Card,useToasts,Modal,Toggle,Spacer,Input} from '@geist-ui/react';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {TiTick,TiCancel} from 'react-icons/ti';
 import {RiCoupon2Fill} from 'react-icons/ri';
 import React from 'react';
 import {apipostCoupon,apigetCoupon,apipatchCoupon,apideleteCoupon} from '../../lib/couponapicontroller';
-  const Coupon = (props) => {
+import { ShopContext } from '../../components/contextprovider';
+
+  const Coupon = () => {
     const operation = (actions, rowData) => {
         return <Button size="mini" shadow auto onClick={(e) => handler(rowData,actions)}>Show Coupon</Button>
     }
     const enabled = (actions, rowData) => {
         return (rowData.rowValue.status) ? <TiTick fontSize="24px"/> : <TiCancel fontSize="24px"/>
     }
-    const dataHandler = () =>{
-        // to do add checking if array
-        if (props.code === 200)
-        {
-            let datalist = []
-            props.data.forEach (item => {
-                datalist.push({...item,discount: `${item.discount}%`,operation,enabled})
-            });
-            return datalist;
-        }
-        else{
-            return []
-        }
-    }
+    const [shop,setShop] = React.useContext(ShopContext);
     const [state, setState] = useState(false)
     const [, setToast] = useToasts();
     const [coupon, setCoupon] = useState({code: '', discount: '',enabled: false});
     const cpcode = React.useRef();
     const cpdiscount = React.useRef();
-    const [data,setData] = useState(dataHandler);
-
+    const [data,setData] = useState([]);
+    useEffect(async () =>{
+        setShop({...shop,loading: true})
+        const data = await apigetCoupon();
+        const unseralized = [];
+        if (data != null){
+        await data.data.data.forEach(i => unseralized.push(i.attributes)); // please fix in the future it hurts my eyes jesus fast api what a mess
+        let datalist = []
+        unseralized.forEach (item => {
+            datalist.push({...item,discount: `${item.discount}%`,operation,enabled})
+        });
+        setShop({...shop,loading: false})
+        setData(datalist);
+    }
+    },[]);
     const handler = (e,actions) => {
         setCoupon({...e.rowValue,remove: actions.remove,update: actions.update});
         setState(true);
@@ -139,14 +141,3 @@ import {apipostCoupon,apigetCoupon,apipatchCoupon,apideleteCoupon} from '../../l
 }
 
 export default Coupon;
-export const getStaticProps = async () => {
-    // Get external data from the file system, API, DB, etc.
-    const data = await apigetCoupon();
-    const unseralized = [];
-    await data.data.data.forEach(i => unseralized.push(i.attributes)); // please fix in the future it hurts my eyes jesus fast api what a mess
-    return {
-      props: {data: unseralized,code: data.code},
-      revalidate: 1, // In seconds
-
-    }
-  }
