@@ -2,7 +2,7 @@
   "name": "pizza-app",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:3000",
+  "proxy": "https://pepperonipizza-api.herokuapp.com",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
