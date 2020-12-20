@@ -32,7 +32,10 @@ function MyApp({ Component, pageProps }) {
   const [path,sethPath] = useState('');
   const [, setToast] = useToasts();
   Router.events.on('routeChangeStart', () => setLoad(true));
-  Router.events.on('routeChangeComplete', () =>  setLoad(false));
+  Router.events.on('routeChangeComplete', () =>  {
+    sethPath(Router.pathname);
+    setLoad(false);
+  });
   Router.events.on('routeChangeError', () => setLoad(false));
 
   const myTheme = {
@@ -45,12 +48,10 @@ function MyApp({ Component, pageProps }) {
 
   const [user, setUser] = useState(
     {
-      adminlevel: 0,
       user: {
         name: null,
         address: null,
         phone: null,
-        adminlevel: 0
       }
     });
 
@@ -59,8 +60,11 @@ function MyApp({ Component, pageProps }) {
     cart: []
   })
 
-  useEffect(() => { // loads cart if saved at local storage
+  useEffect(() => {
     sethPath(Router.pathname);// set path
+  },[]);
+
+  useEffect(() => { // loads cart if saved at local storage
     if (didMountRef.current === false){ // checks if first load
       const savedcart = localStorage.getItem('cart'); // loads cart
       if (savedcart !== null) // checks if not empty
@@ -68,31 +72,24 @@ function MyApp({ Component, pageProps }) {
       didMountRef.current = true;
     }else
       localStorage.setItem('cart',JSON.stringify(cart)); // updates cart every time to local storage
-  }, [[],cart])
+  }, [[],cart]);
 
-  useEffect( async() => { // auto login and checks user changes
-    const saveduser = JSON.parse(localStorage.getItem('user'));
-    if (saveduser !== null && saveduser.adminlevel > 0 || user.adminlevel > 1){
-      const result = await isLogged();
-      if (result.data.status.code === 200){
-        if (!_.isEqual(user,{...user,...result.data.data}))
-          setUser({...user,...result.data.data});
-      }
-      else{
-        if (!_.isEqual(user,{...user,adminlevel: 0}))
-          setUser({...user,adminlevel: 0})
+
+  useEffect( async () => {
+    setLoad(true);
+    const result = await isLogged();
+    if (result.data.status.code === 200){
+      if (Router.pathname === '/admin' || Router.pathname === '/admin/' && result.data.adminlevel > 0){
+        setToast({type: "success",text: "Logged in redirecting to dashboard"});
+        Router.replace('admin/dashboard');        
       }
     }
-  }, [[],user]);
-
-  useEffect( () => {
-    if (Router.pathname.includes('/admin/') && user.adminlevel !== null){
-      if ( user.adminlevel < 1 ){
-        setToast({type: "warning",text: "This path isnt allowed"});
-        Router.replace('/');
-      }
-    }
-  },[[],path]);
+    else if (Router.pathname.includes('/admin/')){
+      setToast({type: "warning",text: "This path isnt allowed"});
+      Router.replace('/');
+  }
+    setLoad(false);
+  },[]);
 
 
   return(
