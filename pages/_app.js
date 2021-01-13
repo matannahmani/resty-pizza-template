@@ -10,6 +10,7 @@ import Close from '../components/close';
 import Footer from '../components/footer';
 import Pizzaspinner from '../components/pizzaspinner';
 import {isLogged} from '../lib/userapicontroller';
+
 var _ = require('lodash');
 
 const Loadingscreen = () => {
@@ -36,7 +37,10 @@ function MyApp({ Component, pageProps }) {
     sethPath(Router.pathname);
     setLoad(false);
   });
-  Router.events.on('routeChangeError', () => setLoad(false));
+  Router.events.on('routeChangeError', () => {
+    setShop({...shop,loading: false});
+    setLoad(false);
+  });
 
   const myTheme = {
     "palette": {

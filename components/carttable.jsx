@@ -85,8 +85,8 @@ const Carttable = (props) => {
     return (
         <>
         <div className="cart-total">
-        <h3 style={{textAlign: "center",color: "#FAFAFA"}}>Order Total : {ordertotal(true)} $</h3>
-    {props.discount.discount !== 0 ?  <span>Original Price: {ordertotal(false)}$</span> : null}
+        <h3 style={{textAlign: "center",color: "#FAFAFA"}}>סה”כ לתשלום : {ordertotal(true)} ₪</h3>
+    {props.discount.discount !== 0 ?  <span>מחיר מקורי: {ordertotal(false)}₪</span> : null}
         </div>
         <Table data={data} hover={false}>
         <Table.Column prop="product" label="product" />
@@ -96,27 +96,27 @@ const Carttable = (props) => {
         </Table>
         {cart.cart.length < 1 ? 
         <Grid>                    
-            <Loading type={"secondary"} size={"large"} color={"white"}>Cart is Empty</Loading>
+            <Loading type={"secondary"} size={"large"} color={"white"}>העגלה ריקה</Loading>
         </Grid>
         : 
         <>
         <Spacer/>
         <Grid.Container justify="space-evenly" alignItems="center">
             <Grid justify="space-between">
-                <Button onClick={handler} ghost auto size="medium" shadow icon={<RiCoupon2Fill/>}>Coupon</Button>
+                <Button onClick={handler} ghost auto size="medium" shadow icon={<RiCoupon2Fill/>}>קופון</Button>
                 <Spacer inline={true}/>
-                <Button onClick={() => props.paid(true)} ghost auto size="medium" shadow icon={<MdPayment/>}>Check Out</Button>
+                <Button onClick={() => props.paid(true)} ghost auto size="medium" shadow icon={<MdPayment/>}>המשך לרכישה</Button>
             </Grid>
         </Grid.Container>
         </>
         }
         <Modal open={state} onClose={closeHandler}>
-        <Modal.Title>Enter Your Coupon</Modal.Title>
+        <Modal.Title>הכנס קופון</Modal.Title>
         <Modal.Content style={{textAlign: "center"}}>
-        <TextField disabled={loading} inputRef={coupon} id="form-code" className="label-shrink black" label="Code" />
+        <TextField disabled={loading} inputRef={coupon} id="form-code" className="label-shrink black" label="קוד" />
         </Modal.Content>
-        <Modal.Action passive onClick={() => setState(false)}>Cancel</Modal.Action>
-        <Modal.Action loading={loading} onClick={couponHandler}>Submit</Modal.Action>
+        <Modal.Action passive onClick={() => setState(false)}>חזור</Modal.Action>
+        <Modal.Action loading={loading} onClick={couponHandler}>הפעל קופון</Modal.Action>
       </Modal>
         </>
     )

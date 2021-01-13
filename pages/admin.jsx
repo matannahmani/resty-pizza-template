@@ -19,44 +19,42 @@ const admin = () => {
                 if (result.status !== 401 && result.status.code === 200){
                     setUser({...user,...result.data});
                     localStorage.setItem('user', JSON.stringify(result.data));
-                    setToast({type: "success",text: "Logged in succesfully redirecting"});
+                    setToast({type: "success",text: "התחברת בהצלחה עובר לפנאל ניהול..."});
                     router.push('admin/dashboard')        
                 }
                 else{
-                    setToast({type: "warning",text: "Email or password are wrong"});
+                    setToast({type: "warning",text: "איימל או סיסמא לא נכונים"});
                 }
             }
             else{
-                setToast({type: "warning",text: "Email or password length are short"});
+                setToast({type: "warning",text: "איימל או סיסמא קצרים מדי"});
             }
         setLoading(false);
     }
     useEffect(() => {
         if (user.adminlevel > 0){
             router.push('/admin/dashboard');
-            setToast({type: "success",text: "Logged in succesfully redirecting"});
+            setToast({type: "success",text: "התחברת בהצלחה עובר לפנאל ניהול..."});
         }
     }, [])
     return (
-        <Grid.Container gap={2} alignItems={"center"} justify={"center"}>
+        <Grid.Container gap={2} justify={"center"}>
             <Grid xs={20} md={12} xl={12} >
             <Card shadow type={"lite"}>
+            <Grid.Container direction={"column"} gap={2} alignItems={"center"} justify={"center"}>
             <Spacer/>
             <Input ref={username} name="email" autoComplete="on" placeholder="Admin" width="240px">
-            <Dot color="black" type="success">
-                Username
-            </Dot>
+            <Dot color="black" type="success">שם משתמש</Dot>
             </Input>
             <Spacer/>
             <Input.Password ref={password} name="password" autoComplete="on" width="240px">
-            <Dot color="black" type="success">
-                Password
-            </Dot>
+            <Dot color="black" type="success">סיסמא</Dot>
             </Input.Password>
             <Spacer/>
             <Grid style={{textAlign: "center"}}>
-                <Button loading={loading} shadow size="medium" auto onClick={loginHandler} type="secondary">Login</Button>
+                <Button loading={loading} shadow size="medium" auto onClick={loginHandler} type="secondary">כניסה</Button>
             </Grid>
+            </Grid.Container>
             </Card>
             </Grid>
         </Grid.Container>

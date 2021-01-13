@@ -1,123 +1,160 @@
 import {Table,Text,Button,Grid,Card,useToasts,Modal,Toggle,Spacer,Input} from '@geist-ui/react';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {TiTick,TiCancel} from 'react-icons/ti';
-import {RiTakeawayFill,RiRestaurantFill} from 'react-icons/ri';
+import {RiCoupon2Fill} from 'react-icons/ri';
 import React from 'react';
+import {apipostOrder,apigetOrder,apipatchOrder} from '../../lib/orderapicontroller';
+import { ShopContext } from '../../components/contextprovider';
+import Router from 'next/router';
 
-const order = () => {
+  const Order = () => {
     const operation = (actions, rowData) => {
-        return (
-        [<Button key="close-order" size="mini" auto shadow onClick={() => removeHandler(rowData)}>Close Order</Button>,
-        <Spacer key="spacer-order"/>,
-        <Button key="show-order" size="mini" auto shadow onClick={(e) => handler(rowData,actions)}>Show Order</Button>]
-        )
+        return <Button size="mini" shadow auto onClick={(e) => handler(rowData,actions)}>Show Coupon</Button>
     }
-    const shipped = (actions, rowData) => {
-        return (rowData.rowValue.isshipped) ? <TiTick fontSize="24px"/> : <TiCancel fontSize="24px"/>
+    const enabled = (actions, rowData) => {
+        return (rowData.rowValue.status) ? <TiTick fontSize="24px"/> : <TiCancel fontSize="24px"/>
     }
-    const deliverytype = (actions, rowData) => {
-        return (rowData.rowValue.takeaway) ? <RiRestaurantFill fontSize="24px"/> : <RiTakeawayFill fontSize="24px"/>
-    }
-    const pizzalist = (actions, rowData) => {
-        return rowData.rowValue.items.map((e,index) => <Text key={index} style={{margin: '4px 0px'}}>{e[0]} - {e[1]}</Text>)
-        // return string
-    }
+    const [shop,setShop] = React.useContext(ShopContext);
     const [state, setState] = useState(false)
     const [, setToast] = useToasts();
-    const [order, setOrder] = useState({products: '', delivery: '',isshipped: false});
+    const [coupon, setCoupon] = useState({code: '', discount: '',enabled: false});
     const cpcode = React.useRef();
     const cpdiscount = React.useRef();
-    const [data,setData] = useState([
-        { name: 'Matan Nahmani', address: 'Kliel ha Horesh 26', items: [['Pepperoni Pizza',2],['Shrimps Pizza',3]], takeaway: false,isshipped: false, shipped, delivery: deliverytype, operation, products: pizzalist},
-        { name: 'Matan Nahmani', address: 'Kliel ha Horesh 27', items: [['Pepperoni Pizza',2],['Shrimps Pizza',3]], takeaway: false,isshipped: false, shipped, delivery: deliverytype, operation, products: pizzalist}
-        ]);
+    const [data,setData] = useState([]);
+    const resucemsg = () => {
+        setShop({...shop,loading: true})
+        setToast({type: 'error',text: `something went wrong!`})
+        Router.replace('/')
+    }
+    useEffect(async () =>{
+        setShop({...shop,loading: true})
+        const data = await apigetOrder();
+        const unseralized = [];
+        if (data.code === 200 && data.data !== null){
+        await data.data.data.forEach(i => unseralized.push(i.attributes)); // please fix in the future it hurts my eyes jesus fast api what a mess
+        let datalist = []
+        unseralized.forEach (item => {
+            datalist.push({...item,discount: `${item.discount}%`,operation,enabled})
+        });
+        setData(datalist);
+        setShop({...shop,loading: false});
+    }
+    else if (data.code === 500){
+        resucemsg();
+    }
+        setShop({...shop,loading: false})
+    },[]);
     const handler = (e,actions) => {
-        setOrder({...e.rowValue,remove: actions.remove,update: actions.update});
+        setCoupon({...e.rowValue,remove: actions.remove,update: actions.update});
         setState(true);
     }
     const closeHandler = (event) => {
         setState(false)
     }
 
-    const removeHandler = (rowData) => {
-        const index = data.findIndex(e => e.name === rowData.rowValue.name && e.address === rowData.rowValue.address )
-        if (confirm(`Are you sure you want to close order ${index+1}`)){    
-            setToast({type: 'warning',text: `Order : ${index+1} was removed`})
-            const updatedata = [...data];
-            updatedata.splice(index,1);
-            setData([...updatedata]);
-            setState(false);
-        }
+    const removeHandler = () => {
+        setToast({type: 'warning',text: `CODE : ${coupon.code} was removed`})
+        const index = data.findIndex(e => e.code === coupon.code)
+        const updatedata = [...data];
+        updatedata.splice(index,1);
+        setData([...updatedata]);
+        // apideleteOrder({id: data[index].id});
+        setState(false);
     }
     const addCouponHandler = () => {
-        setOrder({products: '', delivery: '', status: true, shipped, operation})
+        setCoupon({code: '', discount: '', status: true, enabled, operation})
         setState(true);
     }
-    const postCoupon = () => {
+    const postCoupon = async () => {
         if (cpcode.current.value.length > 2 && cpdiscount.current.value.length > 1)
         {
             if (cpdiscount.current.value > 0 && cpdiscount.current.value < 51){
-                setToast({type: 'success',text: `products : ${cpcode.current.value} added successfully`})
-                setData([...data,{...order,products: cpcode.current.value, delivery: cpdiscount.current.value}])
-                // post to server should be here
+                const newcp = {...coupon,code: cpcode.current.value, discount: cpdiscount.current.value};
+                const result = await apipostOrder((({ operation, enabled, ...o }) => o)(newcp) );
+                if (result.code === 200){
+                    newcp.id = result.data.id;
+                    (data !== undefined ) ? setData([...data,{...newcp,discount: `${newcp.discount}%`}]) : setData([{...newcp,discount: `${newcp.discount}%`}]);
+                    setToast({type: 'success',text: `CODE : ${cpcode.current.value} added successfully`})
+                }
+                else{
+                    setToast({type: 'error',text: `something went wrong!`})
+                }
                 return setState(false);
             }
         }
-        setToast({type: 'error',text: 'order must have 3 letters and delivery is capped at 50%'})
+        setToast({type: 'error',text: 'Coupon must have 3 letters and discount is capped at 50%'})
     }
-    const toggleHandler = (e) => {
-        setOrder({...order, isshipped:e.target.checked})
-        if (order.items !== ''){
-            const updatedate = [...data];
-            const index = updatedate.findIndex((e) => e.name === order.name && e.address === order.address && e.items === order.items);
-            updatedate[index].isshipped = e.target.checked;
-            setData([...updatedate])
-            order.update();
-            setToast({type: 'success',text: `Order : ${index+1} was ${(e.target.checked) ? `shipped` : `disabled`}`})
+    const toggleHandler = async (e) => {
+        setShop({...shop,loading: true})
+        setCoupon({...coupon, status:e.target.checked});
+        if (coupon.code !== ''){
+            const result = await apipatchOrder({status: e.target.checked,id: coupon.id});
+            if (result.code === 200){
+                const updatedate = [...data];
+                const index = updatedate.findIndex((e) => e.code === coupon.code);
+                updatedate[index].status = e.target.checked;
+                setData([...updatedate])
+                coupon.update();
+                setToast({type: 'success',text: `CODE : ${coupon.code} was ${(e.target.checked) ? `enabled` : `disabled`}`})
+            }else{
+                setToast({type: 'error',text: `something went wrong!`})
+            }
         }
+        setShop({...shop,loading: false})
     }
 
       return (
-        <>
+          <>
         <Grid.Container alignItems={"center"} justify={"center"}>
         <Grid style={{overflow: 'auto'}} alignItems={"center"} justify={"center"}>
         <Card type="violet" shadow>
-        <Text h1 size="24px" className="align-center">Total orders : {data.length}</Text>
+            <Text h1 size="24px" className="align-center">Coupon Control Panel</Text>
         <Table hover={false} className="table-white" data={data}>
-          <Table.Column prop="name" label="name" />
-          <Table.Column prop="address" label="address" />
-          <Table.Column prop="products" label="products" width={200} />
-          <Table.Column prop="delivery" label="delivery" />
-          <Table.Column prop="shipped" label="shipped" />
-          <Table.Column c prop="operation" label="operation" />
+          <Table.Column prop="code" label="code" />
+          <Table.Column prop="discount" label="discount" />
+          <Table.Column prop="enabled" label="enabled" />
+          <Table.Column prop="operation" label="operation" />
         </Table>
+        <Spacer/>
+        <Grid.Container justify="flex-end" alignItems="center">
+            <Grid>
+                <Button size="mini" shadow auto icon={<RiCoupon2Fill/>} onClick={addCouponHandler}>Add Coupon</Button>
+            </Grid>
+        </Grid.Container>
         </Card>
         </Grid>
         </Grid.Container>
         <Modal open={state} onClose={closeHandler}>
-        <Modal.Title>Order Number : {data.findIndex(e => e.name === order.name && e.address === order.address && e.items === order.items ) +1}</Modal.Title>
+        <Modal.Title>Coupon</Modal.Title>
         <Modal.Subtitle>
-            {order.items !== undefined ? order.items.map((e,index) => <Text key={index} style={{margin: '4px 0px'}}>{e[0]} - {e[1]}</Text>) : null}
+            {(coupon.code === '') ? <>
+            <Input ref={cpcode}label="code" className="no-hover" clearable width="200px" style={{textAlign: "center"}} placeholder="10OFF"/>
+            </>
+            :
+            <span>{coupon.code}</span>
+        }
+        <Spacer/>
         </Modal.Subtitle>
         <Modal.Content>
         <Text className="align-center">
-            {(order.address === '') ? <>
-            <Input ref={cpdiscount} label="delivery" type="number" min="1" max="50" className="no-hover" clearable labelRight="%" width="200px" style={{textAlign: "center"}} placeholder="20"></Input>
+            {(coupon.discount === '') ? <>
+            <Input ref={cpdiscount} label="discount" type="number" min="1" max="50" className="no-hover" clearable labelRight="%" width="200px" style={{textAlign: "center"}} placeholder="20"></Input>
             </>
             :
-            <span><br/>Name: {order.name} <br/> Address :{order.address}</span>
+            <span>{coupon.discount}</span>
         }
             </Text>
         </Modal.Content>
         <Modal.Action passive onClick={() => setState(false)}>Cancel</Modal.Action>
-        <Modal.Action>
-            <div className="toggle-btn">
-            <Text size={'16px'}>Shipped {<RiTakeawayFill/>}</Text>
-            {<Toggle disabled={order.isshipped} onChange={(e) => toggleHandler(e)}  initialChecked={order.isshipped}/>}
-            </div>
-        </Modal.Action>
+        <Modal.Action>{<Toggle onChange={(e) => toggleHandler(e)}  initialChecked={coupon.status}/>}</Modal.Action>
+        {coupon.code === '' ? 
+        <Modal.Action passive onClick={postCoupon}>Submit</Modal.Action>
+        :
+        <Modal.Action passive onClick={removeHandler}>Remove</Modal.Action>
+        }
         </Modal>
         </>
       )
 }
-export default order;
+
+export default Order;

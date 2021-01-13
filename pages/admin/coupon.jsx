@@ -5,6 +5,7 @@ import {RiCoupon2Fill} from 'react-icons/ri';
 import React from 'react';
 import {apipostCoupon,apigetCoupon,apipatchCoupon,apideleteCoupon} from '../../lib/couponapicontroller';
 import { ShopContext } from '../../components/contextprovider';
+import Router from 'next/router';
 
   const Coupon = () => {
     const operation = (actions, rowData) => {
@@ -20,19 +21,28 @@ import { ShopContext } from '../../components/contextprovider';
     const cpcode = React.useRef();
     const cpdiscount = React.useRef();
     const [data,setData] = useState([]);
+    const resucemsg = () => {
+        setShop({...shop,loading: true})
+        setToast({type: 'error',text: `something went wrong!`})
+        Router.replace('/')
+    }
     useEffect(async () =>{
         setShop({...shop,loading: true})
         const data = await apigetCoupon();
         const unseralized = [];
-        if (data != null){
+        if (data.code === 200 && data.data !== null){
         await data.data.data.forEach(i => unseralized.push(i.attributes)); // please fix in the future it hurts my eyes jesus fast api what a mess
         let datalist = []
         unseralized.forEach (item => {
             datalist.push({...item,discount: `${item.discount}%`,operation,enabled})
         });
-        setShop({...shop,loading: false})
         setData(datalist);
+        setShop({...shop,loading: false});
     }
+    else if (data.code === 500){
+        resucemsg();
+    }
+        setShop({...shop,loading: false})
     },[]);
     const handler = (e,actions) => {
         setCoupon({...e.rowValue,remove: actions.remove,update: actions.update});
@@ -66,24 +76,31 @@ import { ShopContext } from '../../components/contextprovider';
                     (data !== undefined ) ? setData([...data,{...newcp,discount: `${newcp.discount}%`}]) : setData([{...newcp,discount: `${newcp.discount}%`}]);
                     setToast({type: 'success',text: `CODE : ${cpcode.current.value} added successfully`})
                 }
+                else{
+                    setToast({type: 'error',text: `something went wrong!`})
+                }
                 return setState(false);
             }
         }
         setToast({type: 'error',text: 'Coupon must have 3 letters and discount is capped at 50%'})
     }
-    const toggleHandler = (e) => {
-        console.log(process.env.API_APP_URL)
-        setCoupon({...coupon, status:e.target.checked})
+    const toggleHandler = async (e) => {
+        setShop({...shop,loading: true})
+        setCoupon({...coupon, status:e.target.checked});
         if (coupon.code !== ''){
-            const updatedate = [...data];
-            console.log(updatedate);
-            const index = updatedate.findIndex((e) => e.code === coupon.code);
-            updatedate[index].status = e.target.checked;
-            setData([...updatedate])
-            coupon.update();
-            apipatchCoupon({status: e.target.checked,id: coupon.id});
-            setToast({type: 'success',text: `CODE : ${coupon.code} was ${(e.target.checked) ? `enabled` : `disabled`}`})
+            const result = await apipatchCoupon({status: e.target.checked,id: coupon.id});
+            if (result.code === 200){
+                const updatedate = [...data];
+                const index = updatedate.findIndex((e) => e.code === coupon.code);
+                updatedate[index].status = e.target.checked;
+                setData([...updatedate])
+                coupon.update();
+                setToast({type: 'success',text: `CODE : ${coupon.code} was ${(e.target.checked) ? `enabled` : `disabled`}`})
+            }else{
+                setToast({type: 'error',text: `something went wrong!`})
+            }
         }
+        setShop({...shop,loading: false})
     }
 
       return (

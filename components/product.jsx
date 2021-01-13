@@ -2,10 +2,11 @@ import {useToasts} from "@geist-ui/react";
 import React,{useState,useEffect} from 'react';
 import { CartContext } from "./contextprovider";
 
-export default (props) =>{
+const Product = (props) =>{
   const [cart,setCart] = React.useContext(CartContext);
   const [pizza,setPizza] = useState({...props.pizza,choosensize: props.pizza.size[0]});
   const [, setToast] = useToasts();
+
   useEffect(() => {
     setPizza({...props.pizza,choosensize: props.pizza.size[0]});
   }, [props])
@@ -44,11 +45,11 @@ export default (props) =>{
     <>
     <div className="pizza-box">
       <h1 className="name">{pizza.name}</h1>
-      <span className="price">{pizza.price}$</span>
+      <span className="price">{pizza.price}₪</span>
       <span className="description">{pizza.description}</span>
       <div className="pizza-size">
       {pizza.size.map(e =>{
-          return (<span id={e} onClick={() => sizeHandler(e)} className="option">{e}</span>)
+          return (<span key={`S-${e}`} id={e} onClick={() => sizeHandler(e)} className="option">{e}</span>)
         })}
       </div>
       <div className="addcart">
@@ -57,9 +58,10 @@ export default (props) =>{
           <span>{pizza.amount}</span>
           <button onClick={() => (pizza.amount > 1) ? setPizza({size: pizza.amount--,...pizza}) : setToast({text: 'Cannot remove more',type: "warning"})}>-</button>
         </div>
-        <button onClick={() => addCartToggle()} className="cartoption addcartbtn">Add to Cart</button>
+        <button onClick={() => addCartToggle()} className="cartoption addcartbtn">הוסף לעגלה</button>
       </div>
     </div>
     </>
     )
 }
+export default Product;

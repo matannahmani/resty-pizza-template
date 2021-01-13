@@ -12,7 +12,9 @@ $spacer-xl: 4vh;
 @import './product';
 @import './cart';
 @import './admin';
-
+h1,h2,h3,h4,h5,p,span,label{
+  direction: rtl;
+}
 #__next{
   overflow: hidden;
   background: $black;
@@ -194,4 +196,12 @@ input[type=number] {
 .fade-enter-active,
 .fade-exit-active {
   transition: opacity 500ms, transform 500ms;
+}
+.label.jsx-1693940369{
+  margin-right: 8px;
+  margin-left: unset !important;
+}
+.toast{
+  text-align: right !important;
+  justify-content: flex-end !important;
 }

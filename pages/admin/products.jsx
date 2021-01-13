@@ -5,6 +5,7 @@ import {FaPizzaSlice} from 'react-icons/fa';
 import React,{useEffect} from 'react';
 import {apipostProduct,apigetProduct,apipatchProduct,apideleteProduct} from '../../lib/pizzaapicontroller';
 import { ShopContext } from '../../components/contextprovider';
+import Router from 'next/router';
 
 const Products = (props) => {
     const operation = (actions, rowData) => {
@@ -16,19 +17,29 @@ const Products = (props) => {
     const shortdes = (actions, rowData) => {
         return (<Text small>{rowData.rowValue.description !== null ? rowData.rowValue.description.substring(0,50): 'no description'}</Text>)
     }
+    const resucemsg = () => {
+        setShop({...shop,loading: true})
+        setToast({type: 'error',text: `something went wrong!`})
+        Router.replace('/')
+    }
     useEffect(async () =>{
         setShop({...shop,loading: true})
         const data = await apigetProduct();
         const unseralized = [];
-        if (data != null){
+        if (data.status === 401)
+            return resucemsg();
+        if (data.code === 200){
         await data.data.data.forEach(i => unseralized.push(i.attributes)); // please fix in the future it hurts my eyes jesus fast api what a mess
         let datalist = []
         unseralized.forEach (item => {
             datalist.push({...item,photo: item.photo_url,key: item.id,operation,enabled,shortdes})
         });
-        setShop({...shop,loading: false})
         setData(datalist);
     }
+    else{
+        resucemsg();
+    }
+        setShop({...shop,loading: false})
     },[]);
 
     const [shop,setShop] = React.useContext(ShopContext);
@@ -44,7 +55,6 @@ const Products = (props) => {
     const [upload,setLoading] = useState(false);
     const [isupdating,setUpdate] = useState(false);
     const [dataimage,setImage] = useState(undefined);
-
     const handler = (e,actions) => {
         setPizza({...e.rowValue,remove: actions.remove,update: actions.update});
         setState(true);
@@ -53,15 +63,20 @@ const Products = (props) => {
         setState(false)
         setUpdate(false);
     }
-    const removeHandler = () => {
+    const removeHandler = async () => {
         if (confirm(`are you sure you want to delete ${pizza.name}`)){
-        setToast({type: 'warning',text: `${pizza.name} Pizza was removed`})
-        const index = data.findIndex(e => e.name === pizza.name)
-        const updatedata = [...data];
-        updatedata.splice(index,1);
-        setData([...updatedata]);
-        apideleteProduct({id: data[index].id});
-        setState(false);
+            const result = apideleteProduct({id: data[index].id});
+            if (result.status === 200){
+                setToast({type: 'warning',text: `${pizza.name} Pizza was removed`})
+                const index = data.findIndex(e => e.name === pizza.name)
+                const updatedata = [...data];
+                updatedata.splice(index,1);
+                setData([...updatedata]);
+                setState(false);
+            }else
+            {
+                resucemsg();
+            }
         }
     }
     const addPizzaHandler = () => {
@@ -78,11 +93,11 @@ const Products = (props) => {
                 let result;
                 if (updatepizza)
                 {
-                    result = await apipatchProduct((({ operation, enabled,shortdes,key,photo_url,photo, ...o }) => o)({...newcp,photodata: dataimage}) );
+                    result = await apipatchProduct((({ operation, enabled,shortdes,key,photo_url,photo,product, ...o }) => o)({...newcp,photodata: dataimage}) );
                 }
                 else
                 {
-                    result = await apipostProduct((({ operation, enabled,shortdes,key,photo, ...o }) => o)({...newcp,photodata: dataimage}) );
+                    result = await apipostProduct((({ operation, enabled,shortdes,key,photo,id,product, ...o }) => o)({...newcp,photodata: dataimage}) );
                 }
                 if (result.code === 200){
                     if (!updatepizza)
@@ -90,14 +105,14 @@ const Products = (props) => {
                         newcp.id = result.data.id;
                         delete newcp.data;
                         (data !== undefined ) ? setData([...data,{...newcp,photodata: null,shortdes}]) : setData([{...newcp,photodata: null,shortdes}]);
-                        setToast({type: 'success',text: `name : ${newcp.name} added successfully`})
+                        setToast({type: 'success',text: `${newcp.name} added successfully`})
                     }else
                     {
                         const updatedata = [...data]
                         const updateindex = updatedata.findIndex(e => e.id === pizza.id);
                         updatedata[updateindex] = {...updatedata[updateindex],...newcp}
                         setData(updatedata);
-                        setToast({type: 'success',text: `name : ${newcp.name} was updated successfully`})
+                        setToast({type: 'success',text: `${newcp.name} was updated successfully`})
                     }
                 }
                 else{

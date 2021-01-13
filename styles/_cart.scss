@@ -67,7 +67,14 @@
     span{
         position: absolute;
         top: -20px;
-        right: -8px;
+        right: 8px;
         color: red;
     }
+}
+.MuiInputLabel-formControl{
+    right: 0;
+    left: unset !important;
+}
+.MuiInputLabel-shrink{
+    transform-origin: top right !important;
 }

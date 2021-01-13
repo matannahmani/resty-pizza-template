@@ -28,17 +28,28 @@ const Checkout = (props) => {
     const address = React.createRef();
     const phone = React.createRef();
     const inputarray = [name,address,phone];
-    let timer = 0;
+    const [counter, setCounter] = React.useState(119);
     const closeHandler = (event) => {
       setModal(false)
       setVerify({...verify,loading:false});
     }
     const openHandler = () => {
-        // let timer = 0;
-        setInterval(() => {
-            timer += 1000;
-        }, 1000);
+        setCounter(119);
     }
+    const secondsToHms = (d) => {
+        d = Number(d);
+        let h = Math.floor(d / 3600);
+        let m = Math.floor(d % 3600 / 60);
+        let s = Math.floor(d % 3600 % 60);
+        let mDisplay = m > 0 ? "דקה ו" : ""
+        let sDisplay = s > 0 ? s + (s == 1 ? " שניה" : " שניות") : "";
+        return "נשאר " + mDisplay + sDisplay; 
+    }
+    useEffect(() => {
+        const timer =
+        counter > 0 && setInterval(() => setCounter(counter - 1), 1000);
+        return () => clearInterval(timer);
+      }, [counter]);
     const verifyHandler = async () => {
         const regex = /^\+?(972\-?)?0?(([23489]{1}\-?\d{7})|[5]{1}\d{1}\-?\d{7})$/
         if (name.current.value.length > 3 && address.current.value.length > 3 && phone.current.value.length > 3 ){
@@ -46,7 +57,8 @@ const Checkout = (props) => {
                 // setModal(true);
                 const currentuser = {address: address.current.value,name: name.current.value,phone: phone.current.value};
                 const currentcart = cart.cart.map( (e) => ({id: e.id,size: e.choosensize,amount: e.amount}) )
-                // setVerify({...verify,loading: true});
+                setVerify({...verify,loading: true});
+                setModal(true);
                 // if verify then set user state
                 const result = await apipostOrder({...currentuser,order_products: [...currentcart],coupon: props.discount.code,takeaway: props.delivery});
                 setUser({...user,...currentuser})
@@ -82,20 +94,20 @@ const Checkout = (props) => {
         <RiArrowLeftSLine className="returnarrow" style={{position: 'absolute'}} onClick={() => {props.paid(true);props.setDelivery({stage: false,takeaway: false})}}/>
         <Grid.Container alignItems={"center"} justify={"center"} direction={"column"}>
         <Grid>
-        <h3 style={{textAlign: "center",color: "#FAFAFA"}}>Delivery Address</h3>
+        <h3 style={{textAlign: "center",color: "#FAFAFA"}}>פרטי לקוח</h3>
         </Grid>
         <Spacer/>
         <form id="order-form" className={classes.root} noValidate autoComplete="off">
         <Grid>
-            <TextField inputRef={name} id="form-name" autoComplete="on" name="name" className="label-shrink cart-text-white" label="Full Name" />
+            <TextField inputRef={name} id="form-name" autoComplete="on" name="name" className="label-shrink cart-text-white" label="שם מלא" />
         </Grid>
         <Spacer/>
         <Grid>
-        <TextField inputRef={address}id="form-address" autoComplete="on" name="address" className="label-shrink cart-text-white" label="Address" />
+        <TextField inputRef={address}id="form-address" autoComplete="on" name="address" className="label-shrink cart-text-white" label={props.delivery ? 'כתובת משלוח' : 'כתובת לקוח'} />
         </Grid>
         <Spacer/>
         <Grid>
-        <TextField inputRef={phone} id="form-phone" autoComplete="tel" name="phone" type="tel" className="label-shrink cart-text-white" label="Phone" />
+        <TextField inputRef={phone} id="form-phone" autoComplete="tel" name="phone" type="tel" className="label-shrink cart-text-white" label="טלפון" />
         </Grid>
         <Spacer/>
         </form>
@@ -103,23 +115,23 @@ const Checkout = (props) => {
             <Grid>
                 {verify.loading ?
                 <>
-                <Button  loading ghost size={"small"} shadow icon={<MdPhonelinkLock/>}>Verify</Button>
+                <Button  loading ghost size={"small"} shadow icon={<MdPhonelinkLock/>}>אימות</Button>
                 </>
                 :
-                <Button  onClick={() => verifyHandler()} ghost size={"small"} shadow icon={<MdPhonelinkLock/>}>Verify</Button>
+                <Button  onClick={() => verifyHandler()} ghost size={"small"} shadow icon={<MdPhonelinkLock/>}>אימות</Button>
                 }
             </Grid>
         </Grid.Container>
         </Grid.Container>
         <div> {/* Phone Verification */}
         <Modal onOpen={openHandler} open={modal} onClose={closeHandler}>
-        <Modal.Title>Phone Verification</Modal.Title>
-        <Modal.Subtitle>{timer}</Modal.Subtitle>
+        <Modal.Title>אימות טלפוני</Modal.Title>
+        <Modal.Subtitle>{secondsToHms(counter)}</Modal.Subtitle>
         <Modal.Content style={{textAlign: 'center'}}>
-        <TextField id="standard-basic" className="label-shrink black" label="Code" />
+        <TextField id="standard-basic" className="label-shrink black" label="קוד" />
         </Modal.Content>
-        <Modal.Action passive onClick={() => setModal(false)}>Cancel</Modal.Action>
-        <Modal.Action>Submit</Modal.Action>
+        <Modal.Action passive onClick={() => setModal(false)}>חזור</Modal.Action>
+        <Modal.Action>הגש אימות</Modal.Action>
       </Modal>
       </div>
         </>

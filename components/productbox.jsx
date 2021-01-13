@@ -9,11 +9,11 @@ const Productbox = (props) => {
     const [loading,setLoading] = useState(true);
     const flicking = React.createRef(<Flicking/>);
     useEffect(() => {
-        console.log(props.data);
-        const pizzals = props.data.data.map (e => {
+        const showpz = props.data.data.filter((e) => e.status)
+        const pizzals = showpz.map (e => {
             if (e.status){
-                const container = {key: e.id,...e,amount: 1};
-                return container 
+                const pizza = {key: e.id,...e,amount: 1};
+                return pizza 
             }
         });
         setpizzaList([...pizzals])
@@ -26,18 +26,16 @@ const Productbox = (props) => {
             (flick.getIndex() === pizzalist.length -1) ? flick.moveTo(0,500) : flick.moveTo(flick.getIndex() + 1,500); // foward
         else
             (flick.getIndex() === 0) ? flick.moveTo(pizzalist.length - 1,500) : flick.moveTo(flick.getIndex() - 1,500); // backward
-        
-        console.log(flick.getIndex());
-    }
+        }
     return (
         
         <>
         {loading ? 
-        <div className="product-slider">
+        <div key="product-s" className="product-slider">
             LOADING
         </div>
         :
-        <div className="product-slider">
+        <div key="product-s2" className="product-slider">
             <Flicking ref={flicking} onSelect = {(e) => {flicking.current.moveTo(e.index,500)}}  onChange = {(e) => setIndex(e.index)}   inputType = {["touch", "mouse"]} className="flicking flicking0"  autoResize = {true}
   adaptive = {true} gap={16} bound={true} anchor={'80px'} circular={true}>
                 
@@ -46,7 +44,7 @@ const Productbox = (props) => {
                     {
                         if (e === undefined)
                             return null
-                        if (e.photo_url === null)
+                        else if (e.photo_url === null)
                             return(
                                 <div key={e.id} className="panel">
                                 <svg height="160" width="160">

@@ -12,9 +12,9 @@ const Navbar = () => {
             <RiArrowLeftSLine className="returnarrow"/>
             </div>
             : 
-            <div></div> // empty div to push cart to flex end
+            <div className="returnarrow" style={{padding: '14px'}}></div> // empty div to push cart to flex end
             }
-            {/* <h1>Pepperoni Pizza</h1> */}
+            <img src="logo.png" className="nav-logo" alt=""/>
             <div className="cartnav" style={{cursor: 'pointer'}} onClick={() => Router.push('/cart')}>
                 <RiShoppingCartLine className="cartbox"/>
                 <span style={{color: "white",pointerEvents: 'none'}}>{cart.cart.length}</span>
