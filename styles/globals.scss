@@ -45,6 +45,9 @@ h1,h2,h3,h4,h5,p,span,label{
 .showf{
   display: flex;
 }
+.column-btn > div{
+  flex-direction: column;
+}
 
 .content-center{
   width: 100%;

@@ -1,6 +1,6 @@
 import {Grid,Button,Text,useToasts} from '@geist-ui/react';
 import Link from 'next/link';
-import React,{useEffect,useState} from 'react';
+import React from 'react';
 import { ShopContext } from '../../components/contextprovider';
 import { useRouter } from 'next/router'
 import { logout } from '../../lib/userapicontroller';

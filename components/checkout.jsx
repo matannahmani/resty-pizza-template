@@ -1,4 +1,4 @@
-import {Button,Spacer, Modal, useToasts,Image, Grid, Card} from '@geist-ui/react';
+import {Button,Spacer, Modal, useToasts, Grid} from '@geist-ui/react';
 import React,{ useEffect, useState } from 'react';
 import { UserContext,CartContext } from '../components/contextprovider';
 import {MdPhonelinkLock} from 'react-icons/md';
