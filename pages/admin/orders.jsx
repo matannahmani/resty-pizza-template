@@ -12,7 +12,7 @@ import Router from 'next/router';
         return <Button size="mini" shadow auto onClick={(e) => handler(rowData,actions)}>Show Order</Button>
     }
     const enabled = (actions, rowData) => {
-        return (rowData.rowValue.status) ? <TiTick fontSize="24px"/> : <TiCancel fontSize="24px"/>
+        return (rowData.rowValue.shipped) ? <TiTick fontSize="24px"/> : <TiCancel fontSize="24px"/>
     }
     const date = (actions, rowData) => {
         const date = new Date(rowData.rowValue.created_at).toLocaleTimeString('he-IL', {day: '2-digit',month: '2-digit',hour: '2-digit', minute:'2-digit'});
@@ -35,7 +35,7 @@ import Router from 'next/router';
     const [shop,setShop] = React.useContext(ShopContext);
     const [state, setState] = useState(false)
     const [, setToast] = useToasts();
-    const [order, setOrder] = useState({date: '', description: '',takeaway: false,phone: '',address: '',productlist: [],name: '',shipped: false});
+    const [order, setOrder] = useState({date: '', description: '',takeaway: false,phone: '',address: '',productlist: [],name: '',shipped: false,done: false});
     const cpid = React.useRef();
     const cpdiscount = React.useRef();
     const [data,setData] = useState([]);
@@ -70,13 +70,13 @@ import Router from 'next/router';
         setState(false)
     }
 
-    const removeHandler = async () => {
-        const result = await apipatchOrder({done: true,id: order.id,status: order.status});
+    const removeHandler = async () => { // marks as done
+        const result = await apipatchOrder({done: true,id: order.id,shipped: order.shipped});
         if (result.code === 200){
             const index = data.findIndex(e => e.id === order.id)
             const updatedata = [...data];
-            updatedata.splice(index,1);
-            setData([...updatedata])
+            updatedata.splice(index,1); // pops from clone array of data
+            setData([...updatedata]) // set data
             setToast({type: 'warning',text: `Order : ${order.id} was removed`})
         }else{
             setToast({type: 'error',text: `something went wrong!`})
@@ -87,14 +87,14 @@ import Router from 'next/router';
 
     const toggleHandler = async (e) => {
         setShop({...shop,loading: true})
-        setOrder({...order, status:e.target.checked});
-        const result = await apipatchOrder({done: true,id: order.id,status: order.status});
+        setOrder({...order, shipped: e.target.checked});
+        const result = await apipatchOrder({id: order.id,shipped: e.target.checked});
         if (result.code === 200){
                 const updatedate = [...data];
-                const index = updatedate.findIndex((e) => e.id === order.id);
-                updatedate[index].status = e.target.checked;
-                setData([...updatedate])
-                order.update();
+                const index = updatedate.findIndex((e) => e.id === order.id); // finds the order
+                updatedate[index].shipped = e.target.checked; // changes shipped to true
+                setData([...updatedate]) // updates data
+                order.update(); // update data on table
                 setToast({type: 'success',text: `Order : ${order.id} was ${(e.target.checked) ? `shipped` : `unshipped`}`})
             }else{
                 setToast({type: 'error',text: `something went wrong!`})
@@ -107,7 +107,7 @@ import Router from 'next/router';
         <Grid.Container alignItems={"center"} justify={"center"}>
         <Grid style={{overflow: 'auto'}} alignItems={"center"} justify={"center"}>
         <Card type="violet" shadow>
-            <Text h1 size="24px" className="align-center">order Control Panel</Text>
+            <Text h1 size="24px" className="align-center">Order Control Panel</Text>
         <Table hover={false} className="table-white" data={data}>
           <Table.Column prop="date" label="date" />
           <Table.Column width="200" prop="description" label="description" />
@@ -126,17 +126,17 @@ import Router from 'next/router';
         <Modal.Content>
         {order.productlist !== undefined && pdlist(order.productlist)}
         <Spacer/>
-        <Input readOnly label="DeliveryType" initialValue={ order.takeaway ? 'delivery' : 'takeaway' } />
+        <Input readOnly width="300px" label="DeliveryType" initialValue={ order.takeaway ? 'delivery' : 'takeaway' } />
         <Spacer/>
         <Input readOnly label="Name" initialValue={order.name} />
         <Spacer/>
         <Input readOnly label="Address" initialValue={order.address} />
         <Spacer/>
-        <Input readOnly label="Shipped" initialValue={order.shipped} />
+        <Input readOnly label="Shipped" value={order.shipped} />
         </Modal.Content>
         <Modal.Action className="column-btn">
         <Text>Shipped <RiTakeawayFill/></Text>
-        {<Toggle onChange={(e) => toggleHandler(e)}  initialChecked={order.status}/>}
+        {<Toggle onChange={(e) => toggleHandler(e)}  initialChecked={order.shipped}/>}
         </Modal.Action>
         <Modal.Action passive onClick={removeHandler}>Remove</Modal.Action>
         </Modal>

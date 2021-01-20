@@ -4,20 +4,42 @@ import React from 'react';
 import { ShopContext } from '../../components/contextprovider';
 import { useRouter } from 'next/router'
 import { logout } from '../../lib/userapicontroller';
+import {switchshop,switchdelivery,switchtakeaway} from '../../lib/shopapicontroller';
 
 const Dashboard = () => {
     const [shop,setShop] = React.useContext(ShopContext);
     const router = useRouter();
     const [,setToasts] = useToasts();
+    const errormsg = () => setToasts({type: 'error',text: `שגיאה נסה מאוחר יותר!'`})
 
-    const shopHandler = () =>{
-        setToasts({type: 'success',text: `החנות עכשיו ${(!shop.open) ? 'פתוחה' : 'סגורה'}`})
-        setShop({...shop,open: !shop.open})
+    const shopHandler = async () =>{
+        const response = await switchshop();
+        if (response.code === 200){
+            setToasts({type: 'success',text: `החנות עכשיו ${(!shop.open) ? 'פתוחה' : 'סגורה'}`})
+            setShop({...shop,open: !shop.open})
+        }
+        else
+            errormsg()
     }
-    const deliveryHandler = () =>{
+    const deliveryHandler = async () =>{
         // post server get response handle
-        setToasts({type: 'success',text: `Delivery is now ${(!shop.delivery) ? 'פתוחה' : 'סגורה'}`})
-        setShop({...shop,delivery: !shop.delivery})
+        const response = await switchdelivery();
+        if (response.code === 200){
+            setToasts({type: 'success',text: `Delivery is now ${(!shop.delivery) ? 'פתוחה' : 'סגורה'}`})
+            setShop({...shop,delivery: !shop.delivery})
+        }
+        else
+            errormsg()
+    }
+    const takeawayHandler = async () =>{
+        // post server get response handle
+        const response = await switchtakeaway();
+        if (response.code === 200){
+            setToasts({type: 'success',text: `Takeaway is now ${(!shop.delivery) ? 'פתוחה' : 'סגורה'}`})
+            setShop({...shop,takeaway: !shop.takeaway})
+        }
+        else
+            errormsg()
     }
     return (
         <Grid.Container  alignItems="center" gap={4} direction="column">
@@ -41,6 +63,9 @@ const Dashboard = () => {
             </Grid>
             <Grid>
                 <Button shadow onClick={deliveryHandler}><Text b>{(shop.delivery) ? 'סגור משלוחים' : 'פתח משלוחים' }</Text></Button>
+            </Grid>
+            <Grid>
+                <Button shadow onClick={takeawayHandler}><Text b>{(shop.takeaway) ? 'סגור איסוף' : 'פתח איסוף' }</Text></Button>
             </Grid>
             <Grid>
                 <Button shadow onClick={shopHandler}><Text b>{(shop.open) ? 'סגור חנות' : 'פתח חנות' }</Text></Button>

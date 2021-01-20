@@ -15,7 +15,6 @@ const admin = () => {
         if (username !== null && password !== null)
             if (username.current.value.length > 4 && password.current.value.length > 4){
                 const result = await login({email: username.current.value,password: password.current.value});
-                console.log(result.status);
                 if (result.status !== 401 && result.status.code === 200){
                     setUser({...user,...result.data});
                     localStorage.setItem('user', JSON.stringify(result.data));

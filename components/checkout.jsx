@@ -6,6 +6,7 @@ import {RiArrowLeftSLine} from 'react-icons/ri'
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import {apipostOrder} from '../lib/orderapicontroller';
+import Payment from './payment';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -20,6 +21,7 @@ const useStyles = makeStyles((theme) => ({
 const Checkout = (props) => {
     const classes = useStyles();
     const [verify,setVerify] = useState({loading: false, phone: false});
+    const [payment,setPayment] = useState({paying: false,url: ''})
     const [modal, setModal] = useState(false)
     const [user,setUser] = React.useContext(UserContext);
     const [cart,] = React.useContext(CartContext);
@@ -54,14 +56,25 @@ const Checkout = (props) => {
         const regex = /^\+?(972\-?)?0?(([23489]{1}\-?\d{7})|[5]{1}\d{1}\-?\d{7})$/
         if (name.current.value.length > 3 && address.current.value.length > 3 && phone.current.value.length > 3 ){
             if (phone.current.value.match(regex)){
-                // setModal(true);
                 const currentuser = {address: address.current.value,name: name.current.value,phone: phone.current.value};
                 const currentcart = cart.cart.map( (e) => ({id: e.id,size: e.choosensize,amount: e.amount}) )
-                setVerify({...verify,loading: true});
-                setModal(true);
+                // setVerify({...verify,loading: true});
+                // setModal(true);
                 // if verify then set user state
-                const result = await apipostOrder({...currentuser,order_products: [...currentcart],coupon: props.discount.code,takeaway: props.delivery});
+                // props.delivery == true = delivery | props.delivery = false == takeaway
+                const shopresult = await props.checkshop();
+                if (shopresult.open && props.delivery && shopresult.delivery || shopresult.open && !props.delivery && shopresult.takeaway  ){
+
+                    props.setLoading(true);
+                    const result = await apipostOrder({...currentuser,order_products: [...currentcart],coupon: props.discount.code,takeaway: props.delivery});
+                    // setPayment({...payment,paying: true, url: result.data.data.attributes.url })
+                    window.open(result.data.data.attributes.url);
+                }else{
+                    setToast({type: 'error',text: 'האופציה שבחרת אינה זמינה כעת אנא נסה שנית'})
+                    props.setShop({...shopresult,...props.shop});
+                }
                 setUser({...user,...currentuser})
+                props.setLoading(false);
                 localStorage.setItem('user', JSON.stringify(currentuser));
             }else{
             setToast({type: 'error', text: 'Please enter vaild phone: EX: 0541234567'});
@@ -134,6 +147,7 @@ const Checkout = (props) => {
         <Modal.Action>הגש אימות</Modal.Action>
       </Modal>
       </div>
+        {payment.paying === true && <Payment url={payment.url}/>}
         </>
     )
 }

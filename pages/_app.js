@@ -10,6 +10,7 @@ import Close from '../components/close';
 import Footer from '../components/footer';
 import Pizzaspinner from '../components/pizzaspinner';
 import {isLogged} from '../lib/userapicontroller';
+import {shopstatus} from '../lib/shopapicontroller';
 
 var _ = require('lodash');
 
@@ -17,10 +18,7 @@ const Loadingscreen = () => {
   return (
     <Card className="centerdiv" style={{textAlign: "center",fontSize: "2em"}} width={'50%'} shadow>
       <Card.Body style={{overflow: 'hidden'}}>
-
-          <FaPizzaSlice className="pizza-spinner"/>
-          <br/>
-          <Text b>Loading</Text>
+        <Pizzaspinner text="Loading"/>
       </Card.Body>
       </Card>
   )
@@ -29,10 +27,12 @@ const Loadingscreen = () => {
 function MyApp({ Component, pageProps }) {
   const didMountRef = useRef(false);
   const [load, setLoad] = useState(false);
-  const [shop,setShop] = useState({open: true,delivery: true,loading: false})
+  const [shop,setShop] = useState({open: true,delivery: true,takeaway: true,loading: false})
   const [path,sethPath] = useState('');
   const [, setToast] = useToasts();
-  Router.events.on('routeChangeStart', () => setLoad(true));
+  Router.events.on('routeChangeStart',  () => {
+    setLoad(true);
+  });
   Router.events.on('routeChangeComplete', () =>  {
     sethPath(Router.pathname);
     setLoad(false);
@@ -64,10 +64,6 @@ function MyApp({ Component, pageProps }) {
     cart: []
   })
 
-  useEffect(() => {
-    sethPath(Router.pathname);// set path
-  },[]);
-
   useEffect(() => { // loads cart if saved at local storage
     if (didMountRef.current === false){ // checks if first load
       const savedcart = localStorage.getItem('cart'); // loads cart
@@ -78,18 +74,23 @@ function MyApp({ Component, pageProps }) {
       localStorage.setItem('cart',JSON.stringify(cart)); // updates cart every time to local storage
   }, [[],cart]);
 
+  useEffect( async() => {
+    const response = await shopstatus();
+    if (!_.isEqual(response.data, _.omit(shop, 'loading')))
+      setShop({...response.data});
+  },[path])
 
   useEffect( async () => {
+    sethPath(Router.pathname);// set path
     setLoad(true);
+    if (!Router.pathname.includes('/admin')) return setLoad(false);
     const result = await isLogged();
     if (result.data.status.code === 200){
-      if (Router.pathname === '/admin' || Router.pathname === '/admin/' && result.data.adminlevel > 0){
-        setToast({type: "success",text: "Logged in redirecting to dashboard"});
+      if (result.data.adminlevel > 0 && Router.pathname === '/admin'){
         Router.replace('admin/dashboard');        
       }
     }
     else if (Router.pathname.includes('/admin/')){
-      setToast({type: "warning",text: "This path isnt allowed"});
       Router.replace('/');
   }
     setLoad(false);
@@ -112,12 +113,11 @@ function MyApp({ Component, pageProps }) {
     <GeistProvider theme={myTheme}>
       <CssBaseline />
       <div className={shop.loading ? 'showf spinner-div' : "spinner-div"}>
-        {shop.loading ? <Pizzaspinner/> : null }
+        {shop.loading ? <Pizzaspinner text="Loading"/> : null }
       </div>
       <Navbar/>
       <main id="page-wrap">
         <div className="content-center">
-
         {shop.open || path.includes('admin') ? load ? <Loadingscreen/> : <Component {...pageProps} />
         :
         <Close/>

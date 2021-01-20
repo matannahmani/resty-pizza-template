@@ -14,7 +14,7 @@ const Navbar = () => {
             : 
             <div className="returnarrow" style={{padding: '14px'}}></div> // empty div to push cart to flex end
             }
-            <img src="logo.png" className="nav-logo" alt=""/>
+            <img src="../logo.png" className="nav-logo" alt=""/>
             <div className="cartnav" style={{cursor: 'pointer'}} onClick={() => Router.push('/cart')}>
                 <RiShoppingCartLine className="cartbox"/>
                 <span style={{color: "white",pointerEvents: 'none'}}>{cart.cart.length}</span>

@@ -6,8 +6,9 @@ import Carttable from '../components/carttable';
 import Checkout from '../components/checkout';
 import { CSSTransition,SwitchTransition } from 'react-transition-group';
 import {apicheckCart} from '../lib/orderapicontroller';
+import {shopstatus} from '../lib/shopapicontroller';
 
-const Cart = () => {
+const Cart = ({query}) => {
     const [cart,setCart] = React.useContext(CartContext);
     const [shop,setShop] = React.useContext(ShopContext);
     const [paid,setPay] = useState(false);
@@ -16,6 +17,25 @@ const Cart = () => {
     const isArrayEqual = (x, y) => { // for cart checking => (local cart == server cart)
         return _(x).differenceWith(y, _.isEqual).isEmpty();
     };
+
+    useEffect( () => { // check url params if user redirects to error from payment gateway
+        if (query.takeaway !== undefined && query.takeaway === 'true' || query.takeaway === 'false'){
+            setDelivery({...delivery,stage: true,takeaway: query.takeaway === 'true'})
+            setPay(true);
+        }
+    },[])
+
+    const checkshop = async () =>{ // for extreme case when someone in delivery and shop changed.
+        const response = await shopstatus();
+        if (!_.isEqual(response.data, _.omit(shop, 'loading')))
+          setShop({...response.data});
+        return response.data
+    }
+
+    useEffect(() => {
+        checkshop();
+    }, [paid])
+
     useEffect( async () => { // to check if someone edited cart and confirm prices.
         if (cart.cart.length > 0){
             setShop({...shop,loading: true});
@@ -32,7 +52,6 @@ const Cart = () => {
             setShop({...shop,loading: false});
         }
     }, [cart])
-
     const objectsEqual = (o1, o2) => 
     typeof o1 === 'object' && Object.keys(o1).length > 0 
         ? Object.keys(o1).length === Object.keys(o2).length 
@@ -50,9 +69,9 @@ const Cart = () => {
             <Card.Body style={{padding: '16pt 0pt'}}>
                 {!paid ? <Carttable discount={discount} setDiscount={setDiscount} paid={setPay}/>
                     : 
-                    !delivery.stage ? <Deliverymethod paid={setPay} setDelivery={setDelivery}/>
+                    !delivery.stage ? <Deliverymethod paid={setPay} shop={shop} setDelivery={setDelivery}/>
                     :
-                    <Checkout discount={discount} paid={setPay} delivery={delivery.takeaway} setDelivery={setDelivery}/>
+                    <Checkout discount={discount} paid={setPay} checkshop={checkshop} setShop={setShop} shop={shop} setLoading={(e) => setShop({...shop,loading: e})} delivery={delivery.takeaway} setDelivery={setDelivery}/>
                 }
             </Card.Body>
             </Card>
@@ -61,5 +80,8 @@ const Cart = () => {
         </CSSTransition>
    </SwitchTransition>
     )
+}
+Cart.getInitialProps = ({query}) => {
+    return {query}
 }
 export default Cart;
