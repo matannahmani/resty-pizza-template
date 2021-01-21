@@ -36,8 +36,6 @@ import Router from 'next/router';
     const [state, setState] = useState(false)
     const [, setToast] = useToasts();
     const [order, setOrder] = useState({date: '', description: '',takeaway: false,phone: '',address: '',productlist: [],name: '',shipped: false,done: false});
-    const cpid = React.useRef();
-    const cpdiscount = React.useRef();
     const [data,setData] = useState([]);
     const resucemsg = () => {
         setShop({...shop,loading: true})
@@ -110,6 +108,7 @@ import Router from 'next/router';
             <Text h1 size="24px" className="align-center">Order Control Panel</Text>
         <Table hover={false} className="table-white" data={data}>
           <Table.Column prop="date" label="date" />
+          <Table.Column width="200" prop="name" label="name" />
           <Table.Column width="200" prop="description" label="description" />
           <Table.Column prop="deliverytype" label="deliverytype" />
           <Table.Column prop="operation" label="operation" />
@@ -131,6 +130,8 @@ import Router from 'next/router';
         <Input readOnly label="Name" initialValue={order.name} />
         <Spacer/>
         <Input readOnly label="Address" initialValue={order.address} />
+        <Spacer/>
+        <Input readOnly label="Phone" initialValue={order.phone} />
         <Spacer/>
         <Input readOnly label="Shipped" value={order.shipped} />
         </Modal.Content>

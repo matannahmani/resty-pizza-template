@@ -5,11 +5,10 @@ import {apiapprovedOrder} from '../lib/orderapicontroller';
 const Paid = ({query}) => {
     const [status,setStatus] = useState({paid: false,loading: true,text: 'Loading'});
     useEffect( () => {
-        console.log('i am fried once')
         if (query.id !== undefined){
             // const result = await apiapprovedOrder(parseInt(query.id));
         }else{
-            // setStatus({...status,loading: false,text: 'Order not Found'})
+            setStatus({...status,loading: false,text: 'Order not Found'})
         }
 
     },[])

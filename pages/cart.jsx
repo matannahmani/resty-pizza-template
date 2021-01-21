@@ -1,4 +1,4 @@
-import {Card,Grid,Table,Button,Loading, useToasts,Image} from '@geist-ui/react';
+import {Card,Grid} from '@geist-ui/react';
 import React,{ useEffect, useState } from 'react';
 import { CartContext, ShopContext } from '../components/contextprovider';
 import Deliverymethod from '../components/deliverymethod';
@@ -34,7 +34,7 @@ const Cart = ({query}) => {
 
     useEffect(() => {
         checkshop();
-    }, [paid])
+    }, [paid,delivery.stage])
 
     useEffect( async () => { // to check if someone edited cart and confirm prices.
         if (cart.cart.length > 0){
@@ -69,9 +69,9 @@ const Cart = ({query}) => {
             <Card.Body style={{padding: '16pt 0pt'}}>
                 {!paid ? <Carttable discount={discount} setDiscount={setDiscount} paid={setPay}/>
                     : 
-                    !delivery.stage ? <Deliverymethod paid={setPay} shop={shop} setDelivery={setDelivery}/>
+                    !delivery.stage ? <Deliverymethod paid={setPay} setDelivery={setDelivery}/>
                     :
-                    <Checkout discount={discount} paid={setPay} checkshop={checkshop} setShop={setShop} shop={shop} setLoading={(e) => setShop({...shop,loading: e})} delivery={delivery.takeaway} setDelivery={setDelivery}/>
+                    <Checkout discount={discount} paid={setPay} checkshop={checkshop} delivery={delivery.takeaway} setDelivery={setDelivery}/>
                 }
             </Card.Body>
             </Card>

@@ -1,12 +1,11 @@
 import {Button,Spacer, Modal, useToasts, Grid} from '@geist-ui/react';
 import React,{ useEffect, useState } from 'react';
-import { UserContext,CartContext } from '../components/contextprovider';
+import { UserContext,CartContext,ShopContext } from '../components/contextprovider';
 import {MdPhonelinkLock} from 'react-icons/md';
 import {RiArrowLeftSLine} from 'react-icons/ri'
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import {apipostOrder} from '../lib/orderapicontroller';
-import Payment from './payment';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -20,8 +19,8 @@ const useStyles = makeStyles((theme) => ({
 
 const Checkout = (props) => {
     const classes = useStyles();
+    const [shop,setShop] = React.useContext(ShopContext);
     const [verify,setVerify] = useState({loading: false, phone: false});
-    const [payment,setPayment] = useState({paying: false,url: ''})
     const [modal, setModal] = useState(false)
     const [user,setUser] = React.useContext(UserContext);
     const [cart,] = React.useContext(CartContext);
@@ -31,13 +30,16 @@ const Checkout = (props) => {
     const phone = React.createRef();
     const inputarray = [name,address,phone];
     const [counter, setCounter] = React.useState(119);
+
     const closeHandler = (event) => {
       setModal(false)
       setVerify({...verify,loading:false});
     }
+
     const openHandler = () => {
         setCounter(119);
     }
+
     const secondsToHms = (d) => {
         d = Number(d);
         let h = Math.floor(d / 3600);
@@ -47,11 +49,13 @@ const Checkout = (props) => {
         let sDisplay = s > 0 ? s + (s == 1 ? " שניה" : " שניות") : "";
         return "נשאר " + mDisplay + sDisplay; 
     }
-    useEffect(() => {
+
+    useEffect(() => { // countdown
         const timer =
         counter > 0 && setInterval(() => setCounter(counter - 1), 1000);
         return () => clearInterval(timer);
       }, [counter]);
+
     const verifyHandler = async () => {
         const regex = /^\+?(972\-?)?0?(([23489]{1}\-?\d{7})|[5]{1}\d{1}\-?\d{7})$/
         if (name.current.value.length > 3 && address.current.value.length > 3 && phone.current.value.length > 3 ){
@@ -62,19 +66,16 @@ const Checkout = (props) => {
                 // setModal(true);
                 // if verify then set user state
                 // props.delivery == true = delivery | props.delivery = false == takeaway
+                setShop({...shop,loading: true})
                 const shopresult = await props.checkshop();
                 if (shopresult.open && props.delivery && shopresult.delivery || shopresult.open && !props.delivery && shopresult.takeaway  ){
-
-                    props.setLoading(true);
                     const result = await apipostOrder({...currentuser,order_products: [...currentcart],coupon: props.discount.code,takeaway: props.delivery});
-                    // setPayment({...payment,paying: true, url: result.data.data.attributes.url })
                     window.open(result.data.data.attributes.url);
                 }else{
                     setToast({type: 'error',text: 'האופציה שבחרת אינה זמינה כעת אנא נסה שנית'})
-                    props.setShop({...shopresult,...props.shop});
                 }
                 setUser({...user,...currentuser})
-                props.setLoading(false);
+                setShop({...shopresult,loading: false})
                 localStorage.setItem('user', JSON.stringify(currentuser));
             }else{
             setToast({type: 'error', text: 'Please enter vaild phone: EX: 0541234567'});
@@ -88,7 +89,8 @@ const Checkout = (props) => {
             })
         }
     }
-    useEffect(() => {
+
+    useEffect(() => { // loads save user if exists and fill
         const saveduser = JSON.parse(localStorage.getItem('user'));
         if (saveduser !== null && user.name === undefined)
         {
@@ -147,7 +149,6 @@ const Checkout = (props) => {
         <Modal.Action>הגש אימות</Modal.Action>
       </Modal>
       </div>
-        {payment.paying === true && <Payment url={payment.url}/>}
         </>
     )
 }

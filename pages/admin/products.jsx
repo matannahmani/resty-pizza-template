@@ -5,6 +5,7 @@ import {FaPizzaSlice} from 'react-icons/fa';
 import React,{useEffect} from 'react';
 import {apipostProduct,apigetProduct,apipatchProduct,apideleteProduct} from '../../lib/pizzaapicontroller';
 import { ShopContext } from '../../components/contextprovider';
+import SizeAdder from '../../components/sizeadder';
 import Router from 'next/router';
 
 const Products = (props) => {
@@ -80,11 +81,12 @@ const Products = (props) => {
         }
     }
     const addPizzaHandler = () => {
-        setPizza({name: '', price: '',jprice: '', photo: '',size: ["M","XL","XXL","55CM"],status: true,description: '',enabled,operation,shortdes})
+        setPizza({name: '', price: '',jprice: '', photo: '',size: [],status: true,description: '',enabled,operation,shortdes})
+        setUpdate(true);
         setState(true);
     }
     const postPizza = async (updatepizza) => { // post / patch
-        if (pzcode.current.value.length > 2 && pzprice.current.value.length > 1 && pzdesc.current.value.length > 10 && (pzphoto.current.files.length > 0 || isupdating))
+        if (pizza.size.length > 0 && pzcode.current.value.length > 2 && pzprice.current.value.length > 1 && pzdesc.current.value.length > 10 && (pzphoto.current.files.length > 0 || isupdating))
         {
             if (pzprice.current.value > 0 && pzprice.current.value < 201){
                 const previewImage = document.getElementById('preview-img');
@@ -123,7 +125,7 @@ const Products = (props) => {
                 return setState(false);
             }
         }
-        setToast({type: 'error',text: 'Pizza must have 3 letters and price is capped at 250'})
+        setToast({type: 'error',text: 'Pizza must have 3 letters, must have size and price is capped at 250'})
     }
     
     const toggleHandler = (e) => {
@@ -131,6 +133,7 @@ const Products = (props) => {
     }
 
     const sizeHandler = (e) => {
+        setUpdate(true);
         setPizza({...pizza,size: e})
     }
 
@@ -183,80 +186,43 @@ const Products = (props) => {
         <Modal open={state} onClose={closeHandler}>
         <Modal.Title>Pizza</Modal.Title>
         <Spacer/>
-        <Modal.Subtitle>
-            {(pizza.name === '') ? <>
-            <Input ref={pzcode}label="name" className="no-hover" clearable width="200px" style={{textAlign: "center"}} disabled={upload} placeholder="Pepperoni"></Input>
-            </>
-            :
-            <Input ref={pzcode}label="name" className="no-hover" clearable width="200px" style={{textAlign: "center"}} disabled={!isupdating || upload} initialValue={pizza.name}></Input>}
-        </Modal.Subtitle>
-        <Spacer/>
         <Modal.Content className="p-0">
-            <Text className="align-center">
-            {(pizza.price === '') ?
-            [<Input ref={pzprice} label="Price" type="number" min="1" max="200" className="no-hover" clearable labelRight="$" width="200px" disabled={upload} style={{textAlign: "center"}} placeholder="9.99"></Input>,
-            <Spacer/>,
-            <Input ref={pzjprice} label="UP-Price" type="number" min="1" max="30" className="no-hover" clearable labelRight="$" width="200px" disabled={upload} style={{textAlign: "center"}} placeholder="20"></Input>]
-            :
-            [<Input ref={pzprice} label="Price" type="number" min="1" max="200" className="no-hover" clearable labelRight="$" width="200px" style={{textAlign: "center"}} disabled={!isupdating || upload} initialValue={pizza.price}></Input>,
-            <Spacer/>,
-            <Input ref={pzjprice} label="UP-Price" type="number" min="1" max="30" className="no-hover" clearable labelRight="$" width="200px" style={{textAlign: "center"}} disabled={!isupdating || upload} initialValue={pizza.jprice}></Input>]}
-            </Text>
             <div className="align-center">
-            {(pizza.description === '') ? <Textarea ref={pzdesc} width="200px" disabled={upload} placeholder="Please enter a description." />
-            :
-            <Textarea ref={pzdesc} width="200px"  disabled={!isupdating || upload} initialValue={pizza.description} />
-            }
+                <Input ref={pzcode}label="name" className="no-hover" clearable width="200px" style={{textAlign: "center"}} disabled={!isupdating || upload} initialValue={pizza.name}></Input>
+                <Spacer/>
+                <Input ref={pzprice} label="Price" type="number" min="1" max="200" className="no-hover" clearable labelRight="$" width="200px" style={{textAlign: "center"}} disabled={!isupdating || upload} initialValue={pizza.price}></Input>
+                <Spacer/>
+                <Input ref={pzjprice} label="UP-Price" type="number" min="1" max="30" className="no-hover" clearable labelRight="$" width="200px" style={{textAlign: "center"}} disabled={!isupdating || upload} initialValue={pizza.jprice}></Input>
             </div>
-            {(pizza.photo === '') ? 
-            <>
-            <Image id="preview-img" src={(pizza.photo.includes('blob')) ? pizza.photo : `../pizza1.png`} width={160} height={160}/>
+            <div className="align-center">
+             <Textarea ref={pzdesc} placeholder="Please enter a description." width="200px"  disabled={!isupdating || upload} initialValue={pizza.description} />
+            </div>
+            <Image id="preview-img" src={(pizza.photo !== "") ? pizza.photo : `../pizza1.png`} width={160} height={160}/>
             <Spacer/>
-            {upload ? <Loading size="large" color="black">Uploading</Loading> :
             <div className="align-center">
-            <input ref={pzphoto} accept="image/x-png,image/gif,image/jpeg" onChange={(e) => loadImageHandler(e)} style={{width: '50%'}} type="file" />
-            </div>
-            }
+            {isupdating && (upload ?
+            <>
+            <Loading size="large" color="black">Uploading</Loading>
             </>
             :
-            (isupdating) ?
-            upload ? // if uploading image
-            [<Image id="preview-img" src={(pizza.photo !== null ) ? pizza.photo : `../pizza1.png`}  width={160} height={160}/>,
-            <Loading size="large" color="black">Uploading</Loading>]
-            :
-            [<Image id="preview-img" src={(pizza.photo !== null ) ? pizza.photo : `../pizza1.png`}  width={160} height={160}/>,
-            <div className="align-center">,
-            <input ref={pzphoto} accept="image/x-png,image/gif,image/jpeg" onChange={(e) => loadImageHandler(e)} style={{width: '50%'}} type="file" />,
-            </div>]
-            :
-            [<Image id="preview-img" src={(pizza.photo !== null ) ? pizza.photo : `../pizza1.png`}  width={160} height={160}/>,
-            <Spacer/>]
-            }
+            <input ref={pzphoto} accept="image/x-png,image/gif,image/jpeg" onChange={(e) => loadImageHandler(e)} style={{width: '50%'}} type="file" />
+            )}
+            </div>
         </Modal.Content>
-        <Checkbox.Group className="align-center" size="large" disabled={upload || pizza.name !== '' && !isupdating } onChange={sizeHandler} value={pizza.size}>
-        <Checkbox value="M">M</Checkbox>
-        <Checkbox value="XL">XL</Checkbox>
-        <Checkbox value="XXL">XXL</Checkbox>
-        <Checkbox value="55CM">55CM</Checkbox>
-        </Checkbox.Group>
+        <SizeAdder setSize={(e) => setPizza({...pizza,size: e})} size={pizza.size} name={pizza.name} state={{updating: isupdating, sizeHandler,upload}}/>
         <Spacer/>
         {upload ? 
         <Modal.Action className="loading-fix">
             <Loading size="large" color="black">Uploading</Loading>
         </Modal.Action>
         : // not uploading
-        (pizza.name === '') ? // checking if new pizza
-        [<Modal.Action passive onClick={() => setState(false)}>Cancel</Modal.Action>,
-        <Modal.Action>{<Toggle onChange={(e) => toggleHandler(e)}  initialChecked={pizza.status}/>}</Modal.Action>,
-        <Modal.Action passive onClick={() => postPizza(false)}>Submit</Modal.Action>]
-        :
         isupdating ? 
-        [<Modal.Action passive onClick={() => setState(false)}>Cancel</Modal.Action>,
-        <Modal.Action>{<Toggle onChange={(e) => toggleHandler(e)}  initialChecked={pizza.status}/>}</Modal.Action>,
-        <Modal.Action passive onClick={() => postPizza(true)}>Submit</Modal.Action>]
+        [<Modal.Action passive key={'action-cancel'} onClick={() => setState(false)}>Cancel</Modal.Action>,
+        <Modal.Action key={'action-toggler'}>{<Toggle onChange={(e) => toggleHandler(e)}  initialChecked={pizza.status}/>}</Modal.Action>,
+        <Modal.Action passive key={'action-submit'} onClick={() => postPizza(true)}>Submit</Modal.Action>]
         :
-        [<Modal.Action passive onClick={() => setUpdate(true)}>Update</Modal.Action>,
-        <Modal.Action passive onClick={removeHandler}>Remove</Modal.Action>
+        [<Modal.Action passive key={'action-update'} onClick={() => setUpdate(true)}>Update</Modal.Action>,
+        <Modal.Action passive key={'action-remove'} onClick={removeHandler}>Remove</Modal.Action>
         ]
         }
         </Modal>
