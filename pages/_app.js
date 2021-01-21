@@ -86,8 +86,8 @@ function MyApp({ Component, pageProps }) {
     if (!Router.pathname.includes('/admin')) return setLoad(false);
     const result = await isLogged();
     if (result.data.status.code === 200){
-      if (result.data.adminlevel > 0 && Router.pathname === '/admin'){
-        Router.replace('admin/dashboard');        
+      if (result.data.data.adminlevel > 0 && Router.pathname === '/admin'){
+        Router.replace('admin/dashboard');
       }
     }
     else if (Router.pathname.includes('/admin/')){
