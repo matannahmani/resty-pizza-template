@@ -2,6 +2,7 @@ import React from 'react';
 import {RiShoppingCartLine,RiArrowLeftSLine} from 'react-icons/ri'
 import { CartContext } from './contextprovider';
 import { useRouter } from 'next/router'
+import Link from 'next/link'
 const Navbar = () => {
     const [cart,setCart] = React.useContext(CartContext);
     const Router = useRouter();
@@ -14,7 +15,9 @@ const Navbar = () => {
             : 
             <div className="returnarrow" style={{padding: '14px'}}></div> // empty div to push cart to flex end
             }
-            <img src="../logo.png" className="nav-logo" alt=""/>
+            <Link href="/">
+            <img style={{cursor: 'pointer'}} src="../logo.png" className="nav-logo" alt=""/>
+            </Link>
             <div className="cartnav" style={{cursor: 'pointer'}} onClick={() => Router.push('/cart')}>
                 <RiShoppingCartLine className="cartbox"/>
                 <span style={{color: "white",pointerEvents: 'none'}}>{cart.cart.length}</span>

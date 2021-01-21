@@ -52,6 +52,11 @@ const Dashboard = () => {
                 </Link>
             </Grid>
             <Grid>
+                <Link href="dailyorders">
+                <Button shadow><Text b>היסטורית הזמנות יומית</Text></Button>
+                </Link>
+            </Grid>
+            <Grid>
                 <Link href="products">
                 <Button shadow><Text b>פאנל מוצרים</Text></Button>
                 </Link>
