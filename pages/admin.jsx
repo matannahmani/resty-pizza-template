@@ -31,7 +31,6 @@ const admin = () => {
         setLoading(false);
     }
     useEffect(() => {
-        
         if (user.adminlevel > 0){
             router.push('/admin/dashboard');
             setToast({type: "success",text: "התחברת בהצלחה עובר לפנאל ניהול..."});
