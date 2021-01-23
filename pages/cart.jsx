@@ -41,12 +41,16 @@ const Cart = ({query}) => {
             setShop({...shop,loading: true});
             let unseralized;
             const data = await apicheckCart(cart.cart.map(e => `${e.name}=>${e.choosensize}=>${e.amount}`));
-            if (data.code === 200 && data.data !== null ){
-                unseralized = data.data.map(i => ({...i,key: `${i.id}${i.choosensize}`,amount: parseInt(i.amount)}) )
+            if (data.data.status === 200 && data.data.data.length > 0 ){
+                unseralized = data.data.data.map(i => ({...i,key: `${i.id}${i.choosensize}`,amount: parseInt(i.amount)}) )
+            }
+            else{
+                setCart({cart: [],oldcart: []})
+                return setShop({...shop,loading: false});
             }
             if (unseralized !== undefined){
                 if (!isArrayEqual(unseralized,cart.cart)){
-                    setCart({cart: unseralized,oldcart: {}});
+                    setCart({cart: unseralized,oldcart: [shop.cart]});
                 }
             }
             setShop({...shop,loading: false});

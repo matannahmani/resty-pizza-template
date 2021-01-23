@@ -70,8 +70,13 @@ const Checkout = (props) => {
                 const shopresult = await props.checkshop();
                 if (shopresult.open && props.delivery && shopresult.delivery || shopresult.open && !props.delivery && shopresult.takeaway  ){
                     const result = await apipostOrder({...currentuser,order_products: [...currentcart],coupon: props.discount.code,takeaway: props.delivery});
-                    alert('username: meshulam\n password: meshulam\n card :4580111111111121')
-                    window.open(result.data.data.attributes.url);
+                    if (result.data.status === 200){
+                        alert('username: meshulam\n password: meshulam\n card :4580111111111121')
+                        window.open(result.data.data.data.attributes.url);
+                    }
+                    else{
+                        setToast({type: 'error',text: 'האופציה שבחרת אינה זמינה כעת אנא נסה שנית'})
+                    }
                 }else{
                     setToast({type: 'error',text: 'האופציה שבחרת אינה זמינה כעת אנא נסה שנית'})
                 }
