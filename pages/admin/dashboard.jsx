@@ -14,7 +14,7 @@ const Dashboard = () => {
 
     const shopHandler = async () =>{
         const response = await switchshop();
-        if (response.code === 200){
+        if (response.status === 200){
             setToasts({type: 'success',text: `החנות עכשיו ${(!shop.open) ? 'פתוחה' : 'סגורה'}`})
             setShop({...shop,open: !shop.open})
         }
@@ -24,7 +24,7 @@ const Dashboard = () => {
     const deliveryHandler = async () =>{
         // post server get response handle
         const response = await switchdelivery();
-        if (response.code === 200){
+        if (response.status === 200){
             setToasts({type: 'success',text: `Delivery is now ${(!shop.delivery) ? 'פתוחה' : 'סגורה'}`})
             setShop({...shop,delivery: !shop.delivery})
         }
@@ -34,7 +34,7 @@ const Dashboard = () => {
     const takeawayHandler = async () =>{
         // post server get response handle
         const response = await switchtakeaway();
-        if (response.code === 200){
+        if (response.status === 200){
             setToasts({type: 'success',text: `Takeaway is now ${(!shop.delivery) ? 'פתוחה' : 'סגורה'}`})
             setShop({...shop,takeaway: !shop.takeaway})
         }

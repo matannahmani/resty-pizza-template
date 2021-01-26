@@ -26,13 +26,9 @@ const Products = (props) => {
     useEffect(async () =>{
         setShop({...shop,loading: true})
         const data = await apigetProduct();
-        const unseralized = [];
-        if (data.status === 401)
-            return resucemsg();
-        if (data.code === 200){
-        await data.data.data.forEach(i => unseralized.push(i.attributes)); // please fix in the future it hurts my eyes jesus fast api what a mess
+    if (data.status === 200){
         let datalist = []
-        unseralized.forEach (item => {
+        data.data.forEach (item => {
             datalist.push({...item,photo: item.photo_url,key: item.id,operation,enabled,shortdes})
         });
         setData(datalist);
@@ -55,6 +51,7 @@ const Products = (props) => {
     const [data,setData] = useState([]);
     const [upload,setLoading] = useState(false);
     const [isupdating,setUpdate] = useState(false);
+    const [newpizza,setNew] = useState(false);
     const [dataimage,setImage] = useState(undefined);
     const handler = (e,actions) => {
         setPizza({...e.rowValue,remove: actions.remove,update: actions.update});
@@ -62,14 +59,15 @@ const Products = (props) => {
     }
     const closeHandler = (event) => {
         setState(false)
+        setNew(false);
         setUpdate(false);
     }
     const removeHandler = async () => {
+        const index = data.findIndex(e => e.name === pizza.name)
         if (confirm(`are you sure you want to delete ${pizza.name}`)){
-            const result = apideleteProduct({id: data[index].id});
+            const result = await apideleteProduct({id: data[index].id});
             if (result.status === 200){
                 setToast({type: 'warning',text: `${pizza.name} Pizza was removed`})
-                const index = data.findIndex(e => e.name === pizza.name)
                 const updatedata = [...data];
                 updatedata.splice(index,1);
                 setData([...updatedata]);
@@ -83,17 +81,18 @@ const Products = (props) => {
     const addPizzaHandler = () => {
         setPizza({name: '', price: '',jprice: '', photo: '',size: [],status: true,description: '',enabled,operation,shortdes})
         setUpdate(true);
+        setNew(true);
         setState(true);
     }
     const postPizza = async (updatepizza) => { // post / patch
-        if (pizza.size.length > 0 && pzcode.current.value.length > 2 && pzprice.current.value.length > 1 && pzdesc.current.value.length > 10 && (pzphoto.current.files.length > 0 || isupdating))
+        if (pizza.size.length > 0 && pzcode.current.value.length > 2 && pzprice.current.value.length > 1 && pzdesc.current.value.length > 10 && (pzphoto.current.files.length > 0 || !newpizza))
         {
             if (pzprice.current.value > 0 && pzprice.current.value < 201){
                 const previewImage = document.getElementById('preview-img');
                 const newcp = {...pizza,description: pzdesc.current.value, name: pzcode.current.value,photo: previewImage.src, price: pzprice.current.value, jprice: pzjprice.current.value};
                 setLoading(true);
                 let result;
-                if (updatepizza)
+                if (updatepizza && !newpizza)
                 {
                     result = await apipatchProduct((({ operation, enabled,shortdes,key,photo_url,photo,product, ...o }) => o)({...newcp,photodata: dataimage}) );
                 }
@@ -101,8 +100,8 @@ const Products = (props) => {
                 {
                     result = await apipostProduct((({ operation, enabled,shortdes,key,photo,id,product, ...o }) => o)({...newcp,photodata: dataimage}) );
                 }
-                if (result.code === 200){
-                    if (!updatepizza)
+                if (result !== undefined && result.status === 200){
+                    if (newpizza)
                     {
                         newcp.id = result.data.id;
                         delete newcp.data;

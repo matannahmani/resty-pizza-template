@@ -6,6 +6,7 @@ import {RiArrowLeftSLine} from 'react-icons/ri'
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import {apipostOrder} from '../lib/orderapicontroller';
+import PizzaSpinner from '../components/pizzaspinner';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -29,7 +30,8 @@ const Checkout = (props) => {
     const address = React.createRef();
     const phone = React.createRef();
     const inputarray = [name,address,phone];
-    const [counter, setCounter] = React.useState(119);
+    const [counter, setCounter] = useState(119);
+    const [paying,setPaying] = useState(false)
 
     const closeHandler = (event) => {
       setModal(false)
@@ -71,6 +73,7 @@ const Checkout = (props) => {
                 if (shopresult.open && props.delivery && shopresult.delivery || shopresult.open && !props.delivery && shopresult.takeaway  ){
                     const result = await apipostOrder({...currentuser,order_products: [...currentcart],coupon: props.discount.code,takeaway: props.delivery});
                     if (result.data.status === 200){
+                        setPaying(true);
                         alert('username: meshulam\n password: meshulam\n card :4580111111111121')
                         window.open(result.data.data.data.attributes.url);
                     }
@@ -98,7 +101,7 @@ const Checkout = (props) => {
 
     useEffect(() => { // loads save user if exists and fill
         const saveduser = JSON.parse(localStorage.getItem('user'));
-        if (saveduser !== null && user.name === undefined)
+        if (saveduser !== null && saveduser.name !== undefined && saveduser.name !== null)
         {
             name.current.value = saveduser.name;
             address.current.value = saveduser.address;
@@ -118,6 +121,8 @@ const Checkout = (props) => {
         <h3 style={{textAlign: "center",color: "#FAFAFA"}}>פרטי לקוח</h3>
         </Grid>
         <Spacer/>
+        {!paying ?
+        <>
         <form id="order-form" className={classes.root} noValidate autoComplete="off">
         <Grid>
             <TextField inputRef={name} id="form-name" autoComplete="on" name="name" className="label-shrink cart-text-white" label="שם מלא" />
@@ -143,6 +148,12 @@ const Checkout = (props) => {
                 }
             </Grid>
         </Grid.Container>
+        </>
+        :
+        <>
+        <PizzaSpinner text="מחכה לתשלום"/>
+        </>
+        }
         </Grid.Container>
         <div> {/* Phone Verification */}
         <Modal onOpen={openHandler} open={modal} onClose={closeHandler}>

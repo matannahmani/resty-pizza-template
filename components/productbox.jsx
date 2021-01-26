@@ -9,7 +9,7 @@ const Productbox = (props) => {
     const [loading,setLoading] = useState(true);
     const flicking = React.createRef(<Flicking/>);
     useEffect(() => {
-        const showpz = props.data.data.filter((e) => e.status)
+        const showpz = props.data.data.data.filter((e) => e.status)
         const pizzals = showpz.map (e => {
             if (e.status){
                 const pizza = {key: e.id,...e,amount: 1};

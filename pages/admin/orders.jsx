@@ -45,11 +45,10 @@ import Router from 'next/router';
     useEffect(async () =>{
         setShop({...shop,loading: true})
         const data = await apigetOrder();
-        const unseralized = [];
-        if (data.code === 200 && data.data !== null){
-        await data.data.data.forEach(i => unseralized.push(i.attributes)); // please fix in the future it hurts my eyes jesus fast api what a mess
+        console.log(data);
+        if (data.status === 200 && data.data !== null){
         let datalist = []
-        unseralized.forEach (item => {
+        data.data.forEach (item => {
             datalist.push({...item,date,deliverytype,description,operation,enabled})
         });
         setData(datalist);
@@ -75,7 +74,7 @@ import Router from 'next/router';
             const updatedata = [...data];
             updatedata.splice(index,1); // pops from clone array of data
             setData([...updatedata]) // set data
-            setToast({type: 'warning',text: `Order : ${order.id} was removed`})
+            setToast({type: 'warning',text: `Order : ${order.id} was marked done`})
         }else{
             setToast({type: 'error',text: `something went wrong!`})
         }
@@ -139,7 +138,7 @@ import Router from 'next/router';
         <Text>Shipped <RiTakeawayFill/></Text>
         {<Toggle onChange={(e) => toggleHandler(e)}  initialChecked={order.shipped}/>}
         </Modal.Action>
-        <Modal.Action passive onClick={removeHandler}>Remove</Modal.Action>
+        <Modal.Action passive onClick={removeHandler}>Mark as Done</Modal.Action>
         </Modal>
         </>
       )

@@ -3,7 +3,7 @@ import {useEffect, useState} from 'react';
 import {TiTick,TiCancel} from 'react-icons/ti';
 import {RiTakeawayFill,RiRestaurantFill} from 'react-icons/ri';
 import React from 'react';
-import {apigetDailyOrders} from '../../lib/orderapicontroller';
+import {apigetDailyOrders,apipatchOrder} from '../../lib/orderapicontroller';
 import { ShopContext } from '../../components/contextprovider';
 import Router from 'next/router';
 
@@ -51,11 +51,9 @@ import Router from 'next/router';
     useEffect(async () =>{
         setShop({...shop,loading: true})
         const data = await apigetDailyOrders();
-        const unseralized = [];
-        if (data.code === 200 && data.data !== null){
-        await data.data.data.forEach(i => unseralized.push(i.attributes)); // please fix in the future it hurts my eyes jesus fast api what a mess
+        if (data.status === 200 && data.data !== null){
         let datalist = []
-        unseralized.forEach (item => {
+        data.data.forEach (item => {
             datalist.push({...item,date,deliverytype,description,operation,enabled})
         });
         setData(datalist);
@@ -74,6 +72,21 @@ import Router from 'next/router';
     const closeHandler = (event) => {
         setRefund({refund: false,msgloading: false,waiting: false})
         setState(false)
+    }
+
+    const unDoneHandler = async () => {
+        const result = await apipatchOrder({done: false,id: order.id,shipped: order.shipped});
+        if (result.code === 200){
+            const index = data.findIndex(e => e.id === order.id)
+            const updatedata = [...data];
+            updatedata.splice(index,1); // pops from clone array of data
+            setData([...updatedata]) // set data
+            setToast({type: 'warning',text: `Order : ${order.id} was marked undone`})
+        }else{
+            setToast({type: 'error',text: `something went wrong!`})
+        }
+        setShop({...shop,loading: false});
+        setState(false);
     }
     
     const refundHandler = () => {
@@ -140,7 +153,12 @@ import Router from 'next/router';
         <Spacer/>
         </>
         }
-        <Button shadow onClick={refundHandler} loading={refund.msgloading && !refund.waiting} type="error-light">Refund</Button>
+        <Modal.Action>
+        <Button shadow onClick={refundHandler} loading={refund.msgloading && !refund.waiting} size="medium" type="error-light">Refund</Button>
+        </Modal.Action>
+        <Modal.Action>
+        <Button shadow onClick={unDoneHandler} loading={refund.msgloading && !refund.waiting} size="medium" type="success-light">Mark as Undone</Button>
+        </Modal.Action>
         </Modal>
         </>
       )

@@ -29,11 +29,9 @@ import Router from 'next/router';
     useEffect(async () =>{
         setShop({...shop,loading: true})
         const data = await apigetCoupon();
-        const unseralized = [];
-        if (data.code === 200 && data.data !== null){
-        await data.data.data.forEach(i => unseralized.push(i.attributes)); // please fix in the future it hurts my eyes jesus fast api what a mess
+        if (data.status === 200 && data.data !== null){
         let datalist = []
-        unseralized.forEach (item => {
+        data.data.forEach (item => {
             datalist.push({...item,discount: `${item.discount}%`,operation,enabled})
         });
         setData(datalist);
@@ -52,13 +50,19 @@ import Router from 'next/router';
         setState(false)
     }
 
-    const removeHandler = () => {
-        setToast({type: 'warning',text: `CODE : ${coupon.code} was removed`})
+    const removeHandler = async () => {
         const index = data.findIndex(e => e.code === coupon.code)
-        const updatedata = [...data];
-        updatedata.splice(index,1);
-        setData([...updatedata]);
-        apideleteCoupon({id: data[index].id});
+        const result = await apideleteCoupon({id: data[index].id});
+        console.log(result);
+        if (result.status === 200){
+            setToast({type: 'warning',text: `CODE : ${coupon.code} was removed`})
+            const updatedata = [...data];
+            updatedata.splice(index,1);
+            setData([...updatedata]);
+        }
+        else {
+            setToast({type: 'error',text: `ERROR`})
+        }
         setState(false);
     }
     const addCouponHandler = () => {
@@ -71,7 +75,7 @@ import Router from 'next/router';
             if (cpdiscount.current.value > 0 && cpdiscount.current.value < 51){
                 const newcp = {...coupon,code: cpcode.current.value, discount: cpdiscount.current.value};
                 const result = await apipostCoupon((({ operation, enabled, ...o }) => o)(newcp) );
-                if (result.code === 200){
+                if (result.status === 200){
                     newcp.id = result.data.id;
                     (data !== undefined ) ? setData([...data,{...newcp,discount: `${newcp.discount}%`}]) : setData([{...newcp,discount: `${newcp.discount}%`}]);
                     setToast({type: 'success',text: `CODE : ${cpcode.current.value} added successfully`})
@@ -89,7 +93,7 @@ import Router from 'next/router';
         setCoupon({...coupon, status:e.target.checked});
         if (coupon.code !== ''){
             const result = await apipatchCoupon({status: e.target.checked,id: coupon.id});
-            if (result.code === 200){
+            if (result.status === 200){
                 const updatedate = [...data];
                 const index = updatedate.findIndex((e) => e.code === coupon.code);
                 updatedate[index].status = e.target.checked;
