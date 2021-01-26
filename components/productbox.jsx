@@ -38,17 +38,14 @@ const Productbox = (props) => {
         <div key="product-s2" className="product-slider">
             <Flicking ref={flicking} onSelect = {(e) => {flicking.current.moveTo(e.index,500)}}  onChange = {(e) => setIndex(e.index)}   inputType = {["touch", "mouse"]} className="flicking flicking0"  autoResize = {true}
   adaptive = {true} gap={16} bound={true} anchor={'80px'} circular={true}>
-                
-                {pizzalist !== undefined ? 
+                {pizzalist.length > 0 ? 
                 pizzalist.map((e) => 
                     {
-                        if (e === undefined)
-                            return null
-                        else if (e.photo_url === null)
+                        if (e.photo_url === null)
                             return(
                                 <div key={e.id} className="panel">
                                 <svg height="160" width="160">
-                                <circle cx="80" cy="80" r="80" stroke="black" stroke-width="3" fill="red" />
+                                <circle cx="80" cy="80" r="80" stroke="black" strokeWidth="1" fill="#A594F9" />
                                 </svg>
                                 </div>
                             )
@@ -59,7 +56,13 @@ const Productbox = (props) => {
                             )
                         }
                 })
-                : console.log(false)}
+                :
+                <div key="first" className="panel">
+                    <svg height="160" width="160">
+                        <circle cx="80" cy="80" r="80" stroke="black" strokeWidth="1" fill="#A594F9" />
+                    </svg>
+                </div>
+                }
             </Flicking>
             <div className="slider-indicators">
             <RiArrowLeftSLine onClick={() => moveHandler(false)} className="glow" />

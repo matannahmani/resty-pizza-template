@@ -4,23 +4,29 @@ import { CartContext } from "./contextprovider";
 
 const Product = (props) =>{
   const [cart,setCart] = React.useContext(CartContext);
-  const [pizza,setPizza] = useState({...props.pizza,choosensize: props.pizza.size[0]});
+  const [pizza,setPizza] = useState({amount: 1});
   const [, setToast] = useToasts();
 
   useEffect(() => {
-    setPizza({...props.pizza,choosensize: props.pizza.size[0]});
+    if (props.pizza.size !== undefined)
+      setPizza({...props.pizza,amount: 1, choosensize: props.pizza.size[0]});
   }, [props])
   useEffect(() => {
     const pizzasize = document.querySelectorAll('.pizza-size span');
-    pizzasize.forEach((el) => {
-      if (el.id !== pizza.choosensize)
-        el.classList.remove('active');
-      else
-        el.classList.add('active');
-    })
+    if (props.pizza.size !== undefined) {
+      pizzasize.forEach((el) => {
+        if (el.id !== pizza.choosensize)
+          el.classList.remove('active');
+        else
+          el.classList.add('active');
+      })
+    }
   }, [pizza.choosensize])
 
   const addCartToggle = () => {
+    if (props.pizza.name === undefined){
+      return setToast({text: "דמו פיצה נוספה..",type:"success"})
+    }
     const updatecart = [...cart.cart]
     let rowindex;
     if (cart.cart.some((e,index) => {
@@ -44,13 +50,17 @@ const Product = (props) =>{
   return (
     <>
     <div className="pizza-box">
-      <h1 className="name">{pizza.name}</h1>
-      <span className="price">{pizza.price}₪</span>
-      <span className="description">{pizza.description}</span>
+      <h1 className="name">{pizza.name !== undefined ? pizza.name : 'שם הפיצה' }</h1>
+      <span className="price">{pizza.price !== undefined ? pizza.price : '50' }₪</span>
+      <span className="description">{pizza.description !== undefined ? pizza.description : 'כאן יופיע הסבר' }</span>
       <div className="pizza-size">
-      {pizza.size.map(e =>{
-          return (<span key={`S-${e}`} id={e} onClick={() => sizeHandler(e)} className="option">{e}</span>)
-        })}
+      { Array.isArray(pizza.size) ?
+        pizza.size.map(e =>{
+        return (<span key={`S-${e}`} id={e} onClick={() => sizeHandler(e)} className="option">{e}</span>)
+        }) 
+      :
+        (<span key="sample" id="sample-size" style={{cursor: "not-allowed",pointerEvents: 'none'}} className="option active">S</span>)
+      }
       </div>
       <div className="addcart">
         <div className="cartoption">

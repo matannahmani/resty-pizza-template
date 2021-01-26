@@ -12,10 +12,8 @@ export default function Home(props) {
 export const getStaticProps = async () => {
   // Get external data from the file system, API, DB, etc.
   const data = await apigetProduct();
-  const unseralized = [];
-  await data.data.data.forEach(i => unseralized.push(i.attributes)); // please fix in the future it hurts my eyes jesus fast api what a mess
   return {
-    props: {data: unseralized,code: data.code},
+    props: {data},
     revalidate: 1, // In seconds
 
   }

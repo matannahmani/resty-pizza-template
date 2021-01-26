@@ -41,8 +41,8 @@ const Cart = ({query}) => {
             setShop({...shop,loading: true});
             let unseralized;
             const data = await apicheckCart(cart.cart.map(e => `${e.name}=>${e.choosensize}=>${e.amount}`));
-            if (data.data.status === 200 && data.data.data.length > 0 ){
-                unseralized = data.data.data.map(i => ({...i,key: `${i.id}${i.choosensize}`,amount: parseInt(i.amount)}) )
+            if (data.status === 200 && data.data.length > 0 ){
+                unseralized = data.data.map(i => ({...i,key: `${i.id}${i.choosensize}`,amount: parseInt(i.amount)}) )
             }
             else{
                 setCart({cart: [],oldcart: []})
@@ -56,11 +56,7 @@ const Cart = ({query}) => {
             setShop({...shop,loading: false});
         }
     }, [cart])
-    const objectsEqual = (o1, o2) => 
-    typeof o1 === 'object' && Object.keys(o1).length > 0 
-        ? Object.keys(o1).length === Object.keys(o2).length 
-            && Object.keys(o1).every(p => objectsEqual(o1[p], o2[p]))
-        : o1 === o2;
+
     return (
         <SwitchTransition>
         <CSSTransition

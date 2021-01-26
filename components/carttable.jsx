@@ -26,7 +26,7 @@ const Carttable = (props) => {
         const code = coupon.current.value;
         const result = await apicheckCoupon({code: code});
         setLoading(false);
-        if (result.code === 200){
+        if (result.status === 200){
             setToast({text: `${(result.data.discount)}% discount applied`,type: "success"})
             props.setDiscount({discount: result.data.discount,code: code});
         }else{
@@ -37,8 +37,10 @@ const Carttable = (props) => {
     const ordertotal = (discounton) =>{
         let count = 0;
         cart.cart.forEach((e) => {
-            const index = e.size.findIndex(item => item === e.choosensize)
-            count += e.amount * (e.price + index * e.jprice);
+            if (e.size !== undefined){
+                const index = e.size.findIndex(item => item === e.choosensize)
+                count += e.amount * (e.price + index * e.jprice);
+            }
         })
         return discounton ? (count * ((100 - props.discount.discount) / 100)).toFixed(2) : count.toFixed(2)
     }
@@ -74,8 +76,10 @@ const Carttable = (props) => {
         const mydata = []
         if (cart.cart.length > 0)
             cart.cart.forEach((e) => {
-                const index = e.size.findIndex(item => item === e.choosensize)
-                mydata.push({id: e.id, size: e.size,product: `${e.name} - ${e.choosensize}`,amount: e.amount,price: (e.price + e.jprice * index), operation});
+                if (e.size !== undefined){
+                    const index = e.size.findIndex(item => item === e.choosensize)
+                    mydata.push({id: e.id, size: e.size,product: `${e.name} - ${e.choosensize}`,amount: e.amount,price: (e.price + e.jprice * index), operation});
+                }
             });
         else
             setData({product: `none`, amount: `none`, operation})
