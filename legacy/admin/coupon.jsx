@@ -130,24 +130,12 @@ import Router from 'next/router';
         </Grid.Container>
         <Modal open={state} onClose={closeHandler}>
         <Modal.Title>Coupon</Modal.Title>
-        <Modal.Subtitle>
-            {(coupon.code === '') ? <>
-            <Input ref={cpcode}label="code" className="no-hover" clearable width="200px" style={{textAlign: "center"}} placeholder="10OFF"/>
-            </>
-            :
-            <span>{coupon.code}</span>
-        }
-        <Spacer/>
-        </Modal.Subtitle>
         <Modal.Content>
-        <Text className="align-center">
-            {(coupon.discount === '') ? <>
-            <Input ref={cpdiscount} label="discount" type="number" min="1" max="50" className="no-hover" clearable labelRight="%" width="200px" style={{textAlign: "center"}} placeholder="20"></Input>
-            </>
-            :
-            <span>{coupon.discount}</span>
-        }
-            </Text>
+        <div className="align-center">
+            <Input ref={cpcode}label="code" disabled={coupon.code !== ''} initialValue={coupon.code !== '' ? coupon.code : ''} className="no-hover" clearable width="200px" style={{textAlign: "center"}} placeholder="10OFF"/>
+            <Spacer/>
+            <Input ref={cpdiscount} label="discount" disabled={coupon.discount !== ''} initialValue={coupon.discount !== '' && parseInt(coupon.discount)} type="number" min="1" max="50" className="no-hover" clearable labelRight="%" width="200px" style={{textAlign: "center"}} placeholder="10"></Input>
+        </div>
         </Modal.Content>
         <Modal.Action passive onClick={() => setState(false)}>Cancel</Modal.Action>
         <Modal.Action>{<Toggle onChange={(e) => toggleHandler(e)}  initialChecked={coupon.status}/>}</Modal.Action>
